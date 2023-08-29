@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/staek-framework.iml" filepath="$PROJECT_DIR$/staek-framework.iml" />
+      <module fileurl="file://$PROJECT_DIR$/staekframework.iml" filepath="$PROJECT_DIR$/staekframework.iml" />
     </modules>
   </component>
 </project>

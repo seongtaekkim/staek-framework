@@ -1,4 +1,4 @@
-package com.staekfw.web;
+package com.staekframework.web;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

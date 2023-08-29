@@ -1,4 +1,4 @@
-package com.staekfw.web;
+package com.staekframework.web;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;

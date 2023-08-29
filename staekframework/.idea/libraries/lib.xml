@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="lib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/web/WEB-INF/lib/tomcat-embed-core.jar!/" />
+      <root url="jar://$PROJECT_DIR$/web/WEB-INF/lib/tomcat-dbcp.jar!/" />
+      <root url="jar://$PROJECT_DIR$/web/WEB-INF/lib/tomcat-embed-websocket.jar!/" />
+      <root url="jar://$PROJECT_DIR$/web/WEB-INF/lib/annotations-api.jar!/" />
+      <root url="jar://$PROJECT_DIR$/web/WEB-INF/lib/tomcat-embed-jasper.jar!/" />
+      <root url="jar://$PROJECT_DIR$/web/WEB-INF/lib/snakeyaml-1.28.jar!/" />
+      <root url="jar://$PROJECT_DIR$/web/WEB-INF/lib/ecj-4.6.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/web/WEB-INF/lib/tomcat-embed-el.jar!/" />
+      <root url="jar://$PROJECT_DIR$/web/WEB-INF/lib/sqlite-jdbc-3.30.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
