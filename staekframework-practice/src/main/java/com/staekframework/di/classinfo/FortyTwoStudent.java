@@ -1,5 +1,6 @@
 package com.staekframework.di.classinfo;
 
+
 public class FortyTwoStudent  extends Student implements Person {
     private int cardinalNumber;
     private String intraId;
