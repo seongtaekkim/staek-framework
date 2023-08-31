@@ -1,5 +1,8 @@
 package com.staekframework.web;
 
+import com.staekframework.di.ScanAndNewInstance;
+import com.staekframework.test.RepositoryClass;
+import com.staekframework.test.ServiceClass;
 import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;
 
@@ -18,6 +21,10 @@ public class TomcatTest {
 	 */
 	public static void main(String[] args) throws Exception {
 
+		/**
+		 * TODO Tomat jar 를 이용해서 서버를 띄운다.
+		 */
+		/*
 		String root = new File(".").getAbsolutePath();
 
 		String baseDir = root + File.separatorChar + "temp";
@@ -39,6 +46,16 @@ public class TomcatTest {
 
 		tomcat.start();
 		tomcat.getServer().await();
+		 */
+
+
+		/**
+		 * TODO staek-di.jar 를 이용해서 생성한 인스턴스를 가져올 수 있다.
+		 */
+		RepositoryClass object = ScanAndNewInstance.getObject(RepositoryClass.class);
+		System.out.println(object);
+		ServiceClass object1 = ScanAndNewInstance.getObject(ServiceClass.class);
+		System.out.println(object1);
 
 	}
 }
