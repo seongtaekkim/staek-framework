@@ -21,5 +21,14 @@ public class Main {
         ServiceClass object1 = ScanAndNewInstance.getObject(ServiceClass.class);
         System.out.println(object1);
         System.out.println(object1.repositoryClass);
+
+
+        System.out.println("클래스scan + 인스턴스 추가 ========================");
+        /**
+         * 모든 클래스를 조회한다.
+         * @Inject 인 클래스만 인스턴스를 생성한다.
+         * 클래스 내부에 @Inject 가 있는 필드에 인스턴스를 생성해서 주입한다.
+         */
+        ScanAndNewInstance.showAllNewInstance();
     }
 }
