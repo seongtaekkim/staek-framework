@@ -1,6 +1,7 @@
 package com.staekframework.test.User;
 
 import com.staekframework.jdbc.Datasource;
+import com.staekframework.jdbc.PreparedStatementStrategy;
 import com.staekframework.test.strategy.AddAllStrategy;
 import com.staekframework.test.strategy.DeleteAllStrategy;
 import com.staekframework.test.strategy.GetAllStrategy;
@@ -19,26 +20,47 @@ public class UserDao {
         this.datasource = datasource;
     }
 
-
-    public void add(User user) {
-
+    /**
+     * TODO 같은 로직을 함수마다 반복한다. context 진행 중  PreparedStatementStrategy 만 변경된다.
+     *      반복되는 로직을 jdbccontext 라는 이름으로 따로 가져오고, 변경되는 부분을 인자로 받게 해서
+     *      dml 함수의 반복되는 부분을 제거하였다.
+     */
+    public void jdbccontext(PreparedStatementStrategy st) {
         Connection conn = datasource.newConnection();
 
         PreparedStatement ps = null;
         try {
-            ps = new AddAllStrategy().newStatement(conn);
-            ps.setString(1, user.getId());
-            ps.setString(2, user.getName());
+            ps = st.newStatement(conn);
             ps.executeUpdate();
-
-            ps.close();
-            conn.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
         }
     }
 
+    public void deleteAll() {
+        DeleteAllStrategy st = new DeleteAllStrategy(); // create stragtegy
+        jdbccontext(st); // call context
+    }
+
+    public void add(User user) {
+        AddAllStrategy st = new AddAllStrategy(user);
+        jdbccontext(st);
+    }
+
     public User get(String id) {
+
         Connection connection = datasource.newConnection();
 
         ResultSet resultSet = null;
@@ -71,31 +93,6 @@ public class UserDao {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-        }
-    }
-
-
-    public void deleteAll() {
-        Connection conn = datasource.newConnection();
-
-        PreparedStatement ps = null;
-        try {
-            ps = new DeleteAllStrategy().newStatement(conn);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            try {
-                ps.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-
         }
     }
 

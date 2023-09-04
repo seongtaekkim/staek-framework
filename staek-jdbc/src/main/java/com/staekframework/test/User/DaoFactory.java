@@ -13,18 +13,6 @@ public class DaoFactory {
         return new UserDao(getDatasource());
     }
 
-//    public DeleteAllUserDao newDeleteAllUserDao() {
-//        return new DeleteAllUserDao(getDatasource());
-//    }
-
-//    public AddUserDao newAddUserDao() {
-//        return new AddUserDao(getDatasource());
-//    }
-
-//    public GetUserDao newGetUserDao() {
-//        return new GetUserDao(getDatasource());
-//    }
-
     private Datasource getDatasource() {
         return new JDBC();
     }
