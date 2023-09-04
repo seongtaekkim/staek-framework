@@ -1,4 +1,4 @@
-package me.staek;
+package com.staekframework.test;
 
 public class User {
 
