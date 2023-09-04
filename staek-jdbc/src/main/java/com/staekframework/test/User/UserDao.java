@@ -2,8 +2,7 @@ package com.staekframework.test.User;
 
 import com.staekframework.jdbc.Datasource;
 import com.staekframework.jdbc.PreparedStatementStrategy;
-import com.staekframework.test.strategy.AddAllStrategy;
-import com.staekframework.test.strategy.DeleteAllStrategy;
+
 import com.staekframework.test.strategy.GetAllStrategy;
 
 import java.sql.*;
@@ -50,13 +49,27 @@ public class UserDao {
     }
 
     public void deleteAll() {
-        DeleteAllStrategy st = new DeleteAllStrategy(); // create stragtegy
-        jdbccontext(st); // call context
+        jdbccontext(new PreparedStatementStrategy() {
+            @Override
+            public PreparedStatement newStatement(Connection conn) throws SQLException {
+                return conn.prepareStatement("delete from user");
+            }
+        });
     }
 
+    // User 는 final 을 암시하기에 변경 불가
     public void add(User user) {
-        AddAllStrategy st = new AddAllStrategy(user);
-        jdbccontext(st);
+        jdbccontext(new PreparedStatementStrategy() {
+            @Override
+            public PreparedStatement newStatement(Connection conn) throws SQLException {
+                PreparedStatement ps = conn.prepareStatement("insert into user(id,name) values(?,?)");
+
+                ps.setString(1, user.getId());
+                ps.setString(2, user.getName());
+                return ps;
+            }
+        });
+
     }
 
     public User get(String id) {
