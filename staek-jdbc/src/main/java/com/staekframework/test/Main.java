@@ -11,20 +11,23 @@ public class Main {
 
     public static void main(String[] args) {
 
-//        UserDao userDao = new DaoFactory().newUserDao();
-        DeleteAllUserDao deleteAllUserDao = new DaoFactory().newDeleteAllUserDao();
+        /**
+         * 전략패턴 구현으로,
+         * dao factory 에서 다시 UserDao 객체만 생성해도 모든 dml 을 호출할 수 있게 되었다.
+         */
+        UserDao userDao = new DaoFactory().newUserDao();
+
 //        userDao.createTable();
 //        userDao.delete("1");
-        deleteAllUserDao.deleteAll();
+        userDao.deleteAll();
 
-        AddUserDao addUserDao = new DaoFactory().newAddUserDao();
+
         User user = new User();
         user.setId("1");
         user.setName("kim");
-        addUserDao.add(user);
+        userDao.add(user);
 
-        GetUserDao getUserDao = new DaoFactory().newGetUserDao();
-        User user1 = getUserDao.get("1");
+        User user1 = userDao.get("1");
         System.out.println("get result ---  id:" + user1.getId() + " name:" + user1.getName() );
 
     }

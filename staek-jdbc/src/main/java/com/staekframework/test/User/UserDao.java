@@ -1,25 +1,23 @@
 package com.staekframework.test.User;
 
 import com.staekframework.jdbc.Datasource;
-import com.staekframework.jdbc.JDBC;
+import com.staekframework.test.strategy.AddAllStrategy;
+import com.staekframework.test.strategy.DeleteAllStrategy;
+import com.staekframework.test.strategy.GetAllStrategy;
 
-import javax.xml.crypto.Data;
 import java.sql.*;
-import java.util.Random;
 
 /**
  * TODO User 관련 업무에 대한 DAO 이다.
- * dao 로직 전개 중에 변경되는 Statement 만 함수로 추출하였다.
- * 추출한 함수를 구현체를 함수개수만큼 만들어야 한다.(템플릿 메서드 패턴)
+ * 함수별 context 중간에 변경되는 부분을 UserDao 구현체가 처리하도록 했었는데, 너무많은 클래스를 생산해야 했기에
+ * 전략패턴으로 분리시켰다.
  */
-public abstract class UserDao {
+public class UserDao {
 
     protected Datasource datasource;
     public UserDao(Datasource datasource) {
         this.datasource = datasource;
     }
-
-    public abstract PreparedStatement newStatement(Connection conn) throws SQLException;
 
 
     public void add(User user) {
@@ -28,7 +26,7 @@ public abstract class UserDao {
 
         PreparedStatement ps = null;
         try {
-            ps = newStatement(conn);
+            ps = new AddAllStrategy().newStatement(conn);
             ps.setString(1, user.getId());
             ps.setString(2, user.getName());
             ps.executeUpdate();
@@ -47,7 +45,8 @@ public abstract class UserDao {
         PreparedStatement ps = null;
         User user = new User();
         try {
-            ps = newStatement(connection);
+
+            ps = new GetAllStrategy().newStatement(connection);
             ps.setString(1, id);
             resultSet = ps.executeQuery();
             resultSet.next();
@@ -81,7 +80,7 @@ public abstract class UserDao {
 
         PreparedStatement ps = null;
         try {
-            ps = newStatement(conn);
+            ps = new DeleteAllStrategy().newStatement(conn);
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);

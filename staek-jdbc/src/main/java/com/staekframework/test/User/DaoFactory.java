@@ -9,21 +9,21 @@ import com.staekframework.jdbc.JDBC;
  */
 public class DaoFactory {
 
-//    public UserDao newUserDao() {
-//        return new UserDao(getDatasource());
+    public UserDao newUserDao() {
+        return new UserDao(getDatasource());
+    }
+
+//    public DeleteAllUserDao newDeleteAllUserDao() {
+//        return new DeleteAllUserDao(getDatasource());
 //    }
 
-    public DeleteAllUserDao newDeleteAllUserDao() {
-        return new DeleteAllUserDao(getDatasource());
-    }
+//    public AddUserDao newAddUserDao() {
+//        return new AddUserDao(getDatasource());
+//    }
 
-    public AddUserDao newAddUserDao() {
-        return new AddUserDao(getDatasource());
-    }
-
-    public GetUserDao newGetUserDao() {
-        return new GetUserDao(getDatasource());
-    }
+//    public GetUserDao newGetUserDao() {
+//        return new GetUserDao(getDatasource());
+//    }
 
     private Datasource getDatasource() {
         return new JDBC();
