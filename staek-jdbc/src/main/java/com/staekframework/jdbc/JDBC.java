@@ -15,7 +15,7 @@ public class JDBC {
         return url;
     }
 
-    public static Connection getConnection() {
+    public static Connection newConnection() {
 
         Class<?> aClass = null;
         try {
