@@ -5,7 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class JDBC {
+public class JDBC implements Datasource {
     private static String className = "org.sqlite.JDBC";
 
 
@@ -15,7 +15,7 @@ public class JDBC {
         return url;
     }
 
-    public static Connection newConnection() {
+    public Connection newConnection() {
 
         Class<?> aClass = null;
         try {
