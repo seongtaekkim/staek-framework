@@ -11,8 +11,8 @@ import java.sql.*;
 
 /**
  * TODO User 관련 업무에 대한 DAO 이다.
- * 함수별 context 중간에 변경되는 부분을 UserDao 구현체가 처리하도록 했었는데, 너무많은 클래스를 생산해야 했기에
- * 전략패턴으로 분리시켰다.
+ * 전략패턴 구현체가 포함된 context 호출 함수를 추출하여 JDBCContext class로 이동시켰다.
+ * userDao 는 함수호출로 jdbc 기능을 수행할 수 있다.
  */
 public class UserDao {
 
@@ -27,26 +27,11 @@ public class UserDao {
     }
 
     public void deleteAll() {
-        jdbccontext.jdbccontext(new PreparedStatementStrategy() {
-            @Override
-            public PreparedStatement newStatement(Connection conn) throws SQLException {
-                return conn.prepareStatement("delete from user");
-            }
-        });
+        this.jdbccontext.executeSql("delete from user");
     }
 
-    // User 는 final 을 암시하기에 변경 불가
     public void add(User user) {
-        jdbccontext.jdbccontext(new PreparedStatementStrategy() {
-            @Override
-            public PreparedStatement newStatement(Connection conn) throws SQLException {
-                PreparedStatement ps = conn.prepareStatement("insert into user(id,name) values(?,?)");
-
-                ps.setString(1, user.getId());
-                ps.setString(2, user.getName());
-                return ps;
-            }
-        });
+        this.jdbccontext.executeSql("insert into user(id,name) values(?,?)", user);
 
     }
 

@@ -1,5 +1,7 @@
 package com.staekframework.jdbc;
 
+import com.staekframework.test.User.User;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -41,5 +43,27 @@ public class JDBCContext {
             }
 
         }
+    }
+
+    public void executeSql(String query) {
+        this.jdbccontext(new PreparedStatementStrategy() {
+            @Override
+            public PreparedStatement newStatement(Connection conn) throws SQLException {
+                return conn.prepareStatement(query);
+            }
+        });
+    }
+
+    public void executeSql(String query, User user) {
+        this.jdbccontext(new PreparedStatementStrategy() {
+            @Override
+            public PreparedStatement newStatement(Connection conn) throws SQLException {
+                PreparedStatement ps = conn.prepareStatement(query);
+
+                ps.setString(1, user.getId());
+                ps.setString(2, user.getName());
+                return ps;
+            }
+        });
     }
 }
