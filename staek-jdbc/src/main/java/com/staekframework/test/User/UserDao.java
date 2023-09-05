@@ -2,7 +2,6 @@ package com.staekframework.test.User;
 
 import com.staekframework.jdbc.*;
 
-import com.staekframework.test.strategy.CountStrategy;
 import com.staekframework.test.strategy.GetAllStrategy;
 
 import java.sql.*;
