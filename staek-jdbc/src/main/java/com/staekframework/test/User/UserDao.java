@@ -1,10 +1,8 @@
 package com.staekframework.test.User;
 
-import com.staekframework.jdbc.Datasource;
-import com.staekframework.jdbc.JDBC;
-import com.staekframework.jdbc.JDBCContext;
-import com.staekframework.jdbc.PreparedStatementStrategy;
+import com.staekframework.jdbc.*;
 
+import com.staekframework.test.strategy.CountStrategy;
 import com.staekframework.test.strategy.GetAllStrategy;
 
 import java.sql.*;
@@ -71,6 +69,26 @@ public class UserDao {
             }
         }
     }
+
+    public int getCount() {
+        Connection connection = datasource.newConnection();
+        int count = 0;
+
+        return this.jdbccontext.jdbccontext(new PreparedStatementStrategy() {
+            @Override
+            public PreparedStatement newStatement(Connection conn) throws SQLException {
+                return conn.prepareStatement("select count(*) as count from user");
+            }
+        }, new ResultSetStrategy<Integer>() {
+            @Override
+            public Integer getData(ResultSet rs) throws SQLException {
+                rs.next();
+                int anInt = rs.getInt(1);
+                return anInt;
+            }
+        });
+    }
+
 
     public void createTable() {
 

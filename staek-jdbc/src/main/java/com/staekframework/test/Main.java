@@ -32,5 +32,7 @@ public class Main {
         User user1 = userDao.get("1");
         System.out.println("get result ---  id:" + user1.getId() + " name:" + user1.getName() );
 
+        System.out.println("count: " + userDao.getCount());
+
     }
 }

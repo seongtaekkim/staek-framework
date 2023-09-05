@@ -4,6 +4,7 @@ import com.staekframework.test.User.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -45,6 +46,32 @@ public class JDBCContext {
         }
     }
 
+    public int jdbccontext(PreparedStatementStrategy st, ResultSetStrategy rs) {
+        Connection conn = datasource.newConnection();
+
+        PreparedStatement ps = null;
+        try {
+            ps = st.newStatement(conn);
+
+            ResultSet resultSet = ps.executeQuery();
+            Object data = rs.getData(resultSet);
+            return (int)data;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+    }
     public void executeSql(String query) {
         this.jdbccontext(new PreparedStatementStrategy() {
             @Override
