@@ -13,7 +13,7 @@ public class DaoFactory {
         return new UserDao(getDatasource());
     }
 
-    private Datasource getDatasource() {
+    public Datasource getDatasource() {
         return new JDBC();
     }
 }

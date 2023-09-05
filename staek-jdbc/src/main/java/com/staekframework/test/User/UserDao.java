@@ -1,7 +1,6 @@
 package com.staekframework.test.User;
 
-import com.staekframework.jdbc.Datasource;
-import com.staekframework.jdbc.PreparedStatementStrategy;
+import com.staekframework.jdbc.*;
 
 import com.staekframework.test.strategy.GetAllStrategy;
 
@@ -9,8 +8,8 @@ import java.sql.*;
 
 /**
  * TODO User 관련 업무에 대한 DAO 이다.
- * 함수별 context 중간에 변경되는 부분을 UserDao 구현체가 처리하도록 했었는데, 너무많은 클래스를 생산해야 했기에
- * 전략패턴으로 분리시켰다.
+ * 전략패턴 구현체가 포함된 context 호출 함수를 추출하여 JDBCContext class로 이동시켰다.
+ * userDao 는 함수호출로 jdbc 기능을 수행할 수 있다.
  */
 public class UserDao {
 
@@ -19,56 +18,17 @@ public class UserDao {
         this.datasource = datasource;
     }
 
-    /**
-     * TODO 같은 로직을 함수마다 반복한다. context 진행 중  PreparedStatementStrategy 만 변경된다.
-     *      반복되는 로직을 jdbccontext 라는 이름으로 따로 가져오고, 변경되는 부분을 인자로 받게 해서
-     *      dml 함수의 반복되는 부분을 제거하였다.
-     */
-    public void jdbccontext(PreparedStatementStrategy st) {
-        Connection conn = datasource.newConnection();
-
-        PreparedStatement ps = null;
-        try {
-            ps = st.newStatement(conn);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            try {
-                ps.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-
-        }
+    private JDBCContext jdbccontext;
+    public void setContext(JDBCContext context) {
+        this.jdbccontext = context;
     }
 
     public void deleteAll() {
-        jdbccontext(new PreparedStatementStrategy() {
-            @Override
-            public PreparedStatement newStatement(Connection conn) throws SQLException {
-                return conn.prepareStatement("delete from user");
-            }
-        });
+        this.jdbccontext.executeSql("delete from user");
     }
 
-    // User 는 final 을 암시하기에 변경 불가
     public void add(User user) {
-        jdbccontext(new PreparedStatementStrategy() {
-            @Override
-            public PreparedStatement newStatement(Connection conn) throws SQLException {
-                PreparedStatement ps = conn.prepareStatement("insert into user(id,name) values(?,?)");
-
-                ps.setString(1, user.getId());
-                ps.setString(2, user.getName());
-                return ps;
-            }
-        });
+        this.jdbccontext.executeSql("insert into user(id,name) values(?,?)", user);
 
     }
 
@@ -108,6 +68,26 @@ public class UserDao {
             }
         }
     }
+
+    public int getCount() {
+        Connection connection = datasource.newConnection();
+        int count = 0;
+
+        return this.jdbccontext.jdbccontext(new PreparedStatementStrategy() {
+            @Override
+            public PreparedStatement newStatement(Connection conn) throws SQLException {
+                return conn.prepareStatement("select count(*) as count from user");
+            }
+        }, new ResultSetStrategy<Integer>() {
+            @Override
+            public Integer getData(ResultSet rs) throws SQLException {
+                rs.next();
+                int anInt = rs.getInt(1);
+                return anInt;
+            }
+        });
+    }
+
 
     public void createTable() {
 

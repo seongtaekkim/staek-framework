@@ -12,6 +12,7 @@ import java.sql.SQLException;
  * 이 클래스는 오로지 Connection 객체를 받아 PreparedStatement 를 생성하는 용도로만 사용된다.
  *
  */
+@FunctionalInterface
 public interface PreparedStatementStrategy {
     PreparedStatement newStatement(Connection conn) throws SQLException;
 
