@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * TODO PreparedStatement 를 전략패턴을 빼내었기 때문에, 특정 dao 에 의존할 필요가 없어 jdbc 패키지로 옮겼다.
@@ -72,6 +73,35 @@ public class JDBCContext {
 
         }
     }
+
+    public <E> List<E> jdbccontextList(PreparedStatementStrategy st, ResultSetStrategy<E> rs) {
+        Connection conn = datasource.newConnection();
+
+        PreparedStatement ps = null;
+        try {
+            ps = st.newStatement(conn);
+
+            ResultSet resultSet = ps.executeQuery();
+            Object data = rs.getData(resultSet);
+            return (List)data;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+    }
+
     public void executeSql(String query) {
         this.jdbccontext(new PreparedStatementStrategy() {
             @Override

@@ -5,6 +5,7 @@ import com.staekframework.jdbc.*;
 import com.staekframework.test.strategy.GetAllStrategy;
 
 import java.sql.*;
+import java.util.List;
 
 /**
  * TODO User 관련 업무에 대한 DAO 이다.
@@ -29,7 +30,26 @@ public class UserDao {
 
     public void add(User user) {
         this.jdbccontext.executeSql("insert into user(id,name) values(?,?)", user);
+    }
 
+    public List<User> getAll() {
+        Connection connection = datasource.newConnection();
+        List<User> list = null;
+
+        RowMapper<User> rowMapper = rs -> {
+            User user = new User();
+            user.setId(rs.getString("ID"));
+            user.setName(rs.getString("NAME"));
+            return user;
+        };
+
+        List list1 = this.jdbccontext.jdbccontextList(new PreparedStatementStrategy() {
+            @Override
+            public PreparedStatement newStatement(Connection conn) throws SQLException {
+                return conn.prepareStatement("select id, name from user");
+            }
+        }, new RowMapResultSet(rowMapper));
+        return list1;
     }
 
     public User get(String id) {
@@ -111,7 +131,12 @@ public class UserDao {
 
         Connection conn = datasource.newConnection();
 
-        ResultSet rs = null;
+//        this.jdbccontext.jdbccontext(new PreparedStatementStrategy() {
+//            @Override
+//            public PreparedStatement newStatement(Connection conn) throws SQLException {
+//                return conn.prepareStatement("delete from user where id = ?");
+//            }
+//        });
         PreparedStatement ps = null;
         try {
             ps = conn.prepareStatement("delete from user where id = ?");

@@ -7,6 +7,8 @@ import com.staekframework.test.User.*;
 
 
 import java.sql.*;
+import java.util.Arrays;
+import java.util.List;
 
 public class Main {
 
@@ -29,10 +31,18 @@ public class Main {
         user.setName("kim");
         userDao.add(user);
 
+        user.setId("2");
+        user.setName("spring");
+        userDao.add(user);
+
         User user1 = userDao.get("1");
         System.out.println("get result ---  id:" + user1.getId() + " name:" + user1.getName() );
 
         System.out.println("count: " + userDao.getCount());
+
+
+        List<User> list = userDao.getAll();
+        Arrays.stream(list.toArray()).forEach(System.out::println);
 
     }
 }
