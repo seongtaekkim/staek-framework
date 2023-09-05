@@ -2,6 +2,7 @@ package com.staekframework.test;
 
 import com.staekframework.jdbc.Datasource;
 import com.staekframework.jdbc.JDBC;
+import com.staekframework.jdbc.JDBCContext;
 import com.staekframework.test.User.*;
 
 
@@ -16,7 +17,8 @@ public class Main {
          * dao factory 에서 다시 UserDao 객체만 생성해도 모든 dml 을 호출할 수 있게 되었다.
          */
         UserDao userDao = new DaoFactory().newUserDao();
-
+        JDBCContext context = new JDBCContext(new DaoFactory().getDatasource());
+        userDao.setContext(context);
 //        userDao.createTable();
 //        userDao.delete("1");
         userDao.deleteAll();
