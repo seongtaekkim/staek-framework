@@ -133,4 +133,25 @@ public class UserDao {
         }
     }
 
+    public List<User> getList(String name) {
+        Connection connection = datasource.newConnection();
+
+        RowMapper<User> rowMapper = new RowMapper<>() {
+            @Override
+            public User row(ResultSet rs) throws SQLException {
+                User user = new User();
+                user.setId(rs.getString("id"));
+                user.setName(rs.getString("name"));
+                user.setPassword(rs.getString("password"));
+                return user;
+            }
+        };
+        List<User> users = this.jdbccontext.jdbccontextList(new PreparedStatementStrategy() {
+            @Override
+            public PreparedStatement newStatement(Connection conn) throws SQLException {
+                return conn.prepareStatement("select id, name, password from user where name = ?");
+            }
+        }, new RowMapResultSet<User>(rowMapper), name);
+        return users;
+    }
 }

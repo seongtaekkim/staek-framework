@@ -100,6 +100,37 @@ public class JDBCContext {
         }
     }
 
+    public <E> E jdbccontextList(PreparedStatementStrategy st, ResultSetStrategy<E> rs, Object... args) {
+        Connection conn = datasource.newConnection();
+
+        PreparedStatement ps = null;
+        try {
+            ps = st.newStatement(conn);
+
+            if (args != null) {
+                for (int i = 0; i< args.length ; i++)
+                    ps.setString(i+1, args[i].toString());
+            }
+            ResultSet resultSet = ps.executeQuery();
+            Object data = rs.getData(resultSet);
+            return (E) data;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     /**
      *
      *

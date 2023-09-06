@@ -16,10 +16,8 @@ public class Main {
      *
      * getOne(args ...)
      * getAll()
+     * getList(args ...)
      * getCount()
-     *
-     * delete(String)
-     * deleteAll()
      *
      *
      */
@@ -47,9 +45,13 @@ public class Main {
         user.setPassword("2222");
         context.executeSql("insert into user(id,name,password) values(?,?,?)", user);
 
+        user.setId("3");
+        user.setName("spring");
+        user.setPassword("2222");
+        context.executeSql("insert into user(id,name,password) values(?,?,?)", user);
+
 
         System.out.println("count: " + userDao.getCount());
-
 
         System.out.println("getALL==============================");
         List<User> list = userDao.getAll();
@@ -60,6 +62,8 @@ public class Main {
         if (user2 != null)
             System.out.println(user2.toString());
 
-
+        System.out.println("getList ===========================");
+        List<User> spring = userDao.getList("spring");
+        Arrays.stream(spring.toArray()).forEach(System.out::println);
     }
 }
