@@ -31,24 +31,25 @@ public class Main {
         JDBCContext context = new JDBCContext(new DaoFactory().getDatasource());
 //        userDao.createTable();
 //        userDao.delete("1");
-        context.executeSql("delete from user");
+//        context.executeSql("delete from user");
+        userDao.deleteAll();
 
         User user = new User();
         user.setId("1");
         user.setName("kim");
         user.setPassword("1111");
-        context.executeSql("insert into user(id,name,password) values(?,?,?)", user);
+        userDao.insert(user);
 
         user.setId("2");
         user.setName("spring");
         user.setPassword("2222");
-        context.executeSql("insert into user(id,name,password) values(?,?,?)", user);
+        userDao.insert(user);
+
 
         user.setId("3");
         user.setName("spring");
         user.setPassword("2222");
-        context.executeSql("insert into user(id,name,password) values(?,?,?)", user);
-
+        userDao.insert(user);
 
         System.out.println("count: " + userDao.getCount());
 

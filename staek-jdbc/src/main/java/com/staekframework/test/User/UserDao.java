@@ -39,6 +39,15 @@ public class UserDao {
         this.jdbccontext.executeSql("insert into user(id,name,password) values(?,?,?)", user);
     }
 
+    public void insert(User user) {
+        this.jdbccontext.jdbccontext(new PreparedStatementStrategy() {
+            @Override
+            public PreparedStatement newStatement(Connection conn) throws SQLException {
+                return conn.prepareStatement("insert into user(id,name,password) values(?,?,?)");
+            }
+        }, user.getId(), user.getName(), user.getPassword());
+    }
+
     public List<User> getAll() {
         List<User> list = null;
 
