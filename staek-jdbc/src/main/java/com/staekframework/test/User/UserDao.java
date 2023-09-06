@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class UserDao {
 
-    protected Datasource datasource;
+    private final Datasource datasource;
     public UserDao(Datasource datasource) {
         this.datasource = datasource;
     }
@@ -21,6 +21,19 @@ public class UserDao {
     public void setContext(JDBCContext context) {
         this.jdbccontext = context;
     }
+
+
+    private static RowMapper<User> rowMapper = new RowMapper<>() {
+        @Override
+        public User row(ResultSet rs) throws SQLException {
+            User user = new User();
+            user.setId(rs.getString("id"));
+            user.setName(rs.getString("name"));
+            user.setPassword(rs.getString("password"));
+            return user;
+        }
+    };
+
 
     public void deleteAll() {
         this.jdbccontext.executeSql("delete from user");
@@ -34,13 +47,6 @@ public class UserDao {
         Connection connection = datasource.newConnection();
         List<User> list = null;
 
-        RowMapper<User> rowMapper = rs -> {
-            User user = new User();
-            user.setId(rs.getString("ID"));
-            user.setName(rs.getString("NAME"));
-            user.setPassword(rs.getString("PASSWORD"));
-            return user;
-        };
 
         List list1 = this.jdbccontext.jdbccontextList(new PreparedStatementStrategy() {
             @Override
@@ -54,16 +60,7 @@ public class UserDao {
 
     public User getOne(Object... args) {
         Connection connection = datasource.newConnection();
-        RowMapper<User> rowMapper = new RowMapper<>() {
-            @Override
-            public User row(ResultSet rs) throws SQLException {
-                User user = new User();
-                user.setId(rs.getString("id"));
-                user.setName(rs.getString("name"));
-                user.setPassword(rs.getString("password"));
-                return user;
-            }
-        };
+
         User object = this.jdbccontext.jdbccontext(new PreparedStatementStrategy() {
             @Override
             public PreparedStatement newStatement(Connection conn) throws SQLException {
@@ -136,16 +133,6 @@ public class UserDao {
     public List<User> getList(String name) {
         Connection connection = datasource.newConnection();
 
-        RowMapper<User> rowMapper = new RowMapper<>() {
-            @Override
-            public User row(ResultSet rs) throws SQLException {
-                User user = new User();
-                user.setId(rs.getString("id"));
-                user.setName(rs.getString("name"));
-                user.setPassword(rs.getString("password"));
-                return user;
-            }
-        };
         List<User> users = this.jdbccontext.jdbccontextList(new PreparedStatementStrategy() {
             @Override
             public PreparedStatement newStatement(Connection conn) throws SQLException {
