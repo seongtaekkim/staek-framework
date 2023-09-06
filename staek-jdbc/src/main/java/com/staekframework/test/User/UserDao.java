@@ -29,7 +29,7 @@ public class UserDao {
     }
 
     public void add(User user) {
-        this.jdbccontext.executeSql("insert into user(id,name) values(?,?)", user);
+        this.jdbccontext.executeSql("insert into user(id,name,passwird) values(?,?,?)", user);
     }
 
     public List<User> getAll() {
@@ -40,18 +40,40 @@ public class UserDao {
             User user = new User();
             user.setId(rs.getString("ID"));
             user.setName(rs.getString("NAME"));
+            user.setPassword(rs.getString("PASSWORD"));
             return user;
         };
 
         List list1 = this.jdbccontext.jdbccontextList(new PreparedStatementStrategy() {
             @Override
             public PreparedStatement newStatement(Connection conn) throws SQLException {
-                return conn.prepareStatement("select id, name from user");
+                return conn.prepareStatement("select id, name, password from user");
             }
         }, new RowMapResultSet(rowMapper));
         return list1;
     }
 
+
+    public User getOne(Object... args) {
+        Connection connection = datasource.newConnection();
+        RowMapper<User> rowMapper = new RowMapper<>() {
+            @Override
+            public User row(ResultSet rs) throws SQLException {
+                User user = new User();
+                user.setId(rs.getString("id"));
+                user.setName(rs.getString("name"));
+                user.setPassword(rs.getString("password"));
+                return user;
+            }
+        };
+        User object = this.jdbccontext.jdbccontext(new PreparedStatementStrategy() {
+            @Override
+            public PreparedStatement newStatement(Connection conn) throws SQLException {
+                return conn.prepareStatement("select id, name, password from user where id = ? AND password = ?");
+            }
+        }, new RowMapResultSet(rowMapper), args);
+        return object;
+    }
     public User get(String id) {
 
         Connection connection = datasource.newConnection();
@@ -67,6 +89,7 @@ public class UserDao {
             resultSet.next();
             user.setId(resultSet.getString("id"));
             user.setName(resultSet.getString("name"));
+            user.setPassword(resultSet.getString("password"));
             return user;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -115,7 +138,8 @@ public class UserDao {
 
         String sql = "CREATE TABLE IF NOT EXISTS user (\n"
                 + "	id integer PRIMARY KEY,\n"
-                + "	name text NOT NULL\n"
+                + "	name text NOT NULL,\n"
+                + " password text NOT NULL\n"
                 + ");";
 
         Statement stmt = null;

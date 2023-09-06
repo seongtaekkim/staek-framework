@@ -104,29 +104,25 @@ public class JDBCContext {
      *
      *  selectOne
      */
-    public <E> E jdbccontext(PreparedStatementStrategy st, ResultSetStrategy rs, Object... args) {
+    public <T> T jdbccontext(PreparedStatementStrategy st, ResultSetStrategy rs, Object... args) {
         Connection conn = datasource.newConnection();
 
         PreparedStatement ps = null;
 
-        if (args != null) {
-            for (int i = 0; i < args.length; i++) {
-                Object arg = args[i];
-
-                try {
-                    ps.setString(i+1, arg.toString());
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
 
         try {
             ps = st.newStatement(conn);
+            if (args != null) {
+                for (int i = 0; i < args.length; i++) {
+                    Object arg = args[i];
+                    ps.setString(i+1, arg.toString());
+                }
+            }
 
             ResultSet resultSet = ps.executeQuery();
-            Object data = rs.getData(resultSet);
-            return (E)data;
+            List<T> data = (List<T>) rs.getData(resultSet);
+            T next = data.iterator().next();
+            return next;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
@@ -162,6 +158,7 @@ public class JDBCContext {
 
                 ps.setString(1, user.getId());
                 ps.setString(2, user.getName());
+                ps.setString(3, user.getPassword());
                 return ps;
             }
         });

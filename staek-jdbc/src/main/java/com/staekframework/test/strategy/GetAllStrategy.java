@@ -9,6 +9,6 @@ import java.sql.SQLException;
 public class GetAllStrategy implements PreparedStatementStrategy {
     @Override
     public PreparedStatement newStatement(Connection conn) throws SQLException {
-        return conn.prepareStatement("select id, name from user where id = ?");
+        return conn.prepareStatement("select id, name, password from user where id = ?");
     }
 }

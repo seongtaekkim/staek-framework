@@ -32,18 +32,20 @@ public class Main {
         UserDao userDao = new DaoFactory().newUserDao();
         JDBCContext context = new JDBCContext(new DaoFactory().getDatasource());
         userDao.setContext(context);
-//        userDao.createTable();
+        userDao.createTable();
 //        userDao.delete("1");
         context.executeSql("delete from user");
 
         User user = new User();
         user.setId("1");
         user.setName("kim");
-        context.executeSql("insert into user(id,name) values(?,?)", user);
+        user.setPassword("1111");
+        context.executeSql("insert into user(id,name,password) values(?,?,?)", user);
 
         user.setId("2");
         user.setName("spring");
-        context.executeSql("insert into user(id,name) values(?,?)", user);
+        user.setPassword("2222");
+        context.executeSql("insert into user(id,name,password) values(?,?,?)", user);
 
 
         User user1 = userDao.get("1");
@@ -57,7 +59,7 @@ public class Main {
         Arrays.stream(list.toArray()).forEach(System.out::println);
 
         System.out.println("getOne =============================");
-        User user2 = userDao.get("2");
+        User user2 = userDao.getOne("2","2222");
         System.out.println(user2.toString());
 
 
