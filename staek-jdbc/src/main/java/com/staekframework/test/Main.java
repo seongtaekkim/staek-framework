@@ -28,28 +28,25 @@ public class Main {
          * dao factory 에서 다시 UserDao 객체만 생성해도 모든 dml 을 호출할 수 있게 되었다.
          */
         UserDao userDao = new DaoFactory().newUserDao();
-        JDBCContext context = new JDBCContext(new DaoFactory().getDatasource());
-        userDao.setContext(context);
-        userDao.createTable();
-//        userDao.delete("1");
-        context.executeSql("delete from user");
+//        userDao.createTable();
+        userDao.deleteAll();
 
         User user = new User();
         user.setId("1");
         user.setName("kim");
         user.setPassword("1111");
-        context.executeSql("insert into user(id,name,password) values(?,?,?)", user);
+        userDao.insert(user);
 
         user.setId("2");
         user.setName("spring");
         user.setPassword("2222");
-        context.executeSql("insert into user(id,name,password) values(?,?,?)", user);
+        userDao.insert(user);
+
 
         user.setId("3");
         user.setName("spring");
         user.setPassword("2222");
-        context.executeSql("insert into user(id,name,password) values(?,?,?)", user);
-
+        userDao.insert(user);
 
         System.out.println("count: " + userDao.getCount());
 
@@ -65,5 +62,9 @@ public class Main {
         System.out.println("getList ===========================");
         List<User> spring = userDao.getList("spring");
         Arrays.stream(spring.toArray()).forEach(System.out::println);
+
+        System.out.println("delete==========================");
+        userDao.delete("1");
+        System.out.println(userDao.getOne("1","1111"));
     }
 }

@@ -4,6 +4,8 @@ import com.staekframework.jdbc.util.DataAccessUtil;
 import com.staekframework.test.User.User;
 
 import java.sql.*;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -45,6 +47,9 @@ public class JDBCContext {
         }
     }
 
+    /**
+     * 테이블 Row 전체 카운트
+     */
     public int jdbccontext(PreparedStatementStrategy st, ResultSetStrategy rs) {
         Connection conn = datasource.newConnection();
 
@@ -72,7 +77,7 @@ public class JDBCContext {
         }
     }
 
-    public <E> List<E> jdbccontextList(PreparedStatementStrategy st, ResultSetStrategy<E> rs) {
+    public <E> E jdbccontextList(PreparedStatementStrategy st, ResultSetStrategy<E> rs) {
         Connection conn = datasource.newConnection();
 
         PreparedStatement ps = null;
@@ -81,7 +86,7 @@ public class JDBCContext {
 
             ResultSet resultSet = ps.executeQuery();
             Object data = rs.getData(resultSet);
-            return (List)data;
+            return (E) data;
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -136,7 +141,7 @@ public class JDBCContext {
      *
      *  selectOne
      */
-    public <T> T jdbccontext(PreparedStatementStrategy st, ResultSetStrategy rs, Object... args) {
+    public <T> T jdbccontext(PreparedStatementStrategy st, ResultSetStrategy<List<T>> rs, Object... args) {
         Connection conn = datasource.newConnection();
 
         PreparedStatement ps = null;
@@ -150,7 +155,38 @@ public class JDBCContext {
                 }
             }
             ResultSet resultSet = ps.executeQuery();
-            return DataAccessUtil.SelectOne((List<T>)rs.getData(resultSet));
+            List<T> data = rs.getData(resultSet);
+            return DataAccessUtil.SelectOne(data);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+    }
+
+    public void jdbccontext(PreparedStatementStrategy st, Object... args) {
+        Connection conn = datasource.newConnection();
+
+        PreparedStatement ps = null;
+        try {
+            ps = st.newStatement(conn);
+            if (args != null) {
+                for (int i = 0 ; i < args.length ; i++)
+                    ps.setString(i+1, args[i].toString());
+            } else
+                throw new NullPointerException();
+
+            ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
@@ -169,26 +205,83 @@ public class JDBCContext {
     }
 
 
-    public void executeSql(String query) {
-        this.jdbccontext(new PreparedStatementStrategy() {
+    /**
+     * 테이블 row 전체 카운트
+     */
+    public int countSql(String sql) {
+        int count = 0;
+
+        return this.jdbccontext(new PreparedStatementStrategy() {
             @Override
             public PreparedStatement newStatement(Connection conn) throws SQLException {
-                return conn.prepareStatement(query);
+                return conn.prepareStatement("select count(*) as count from user");
+            }
+        }, new ResultSetStrategy<Integer>() {
+            @Override
+            public Integer getData(ResultSet rs) throws SQLException {
+                rs.next();
+                int anInt = rs.getInt(1);
+                return anInt;
             }
         });
     }
 
-    public void executeSql(String query, User user) {
+
+    /**
+     * 가변인자 조건으로 list return
+     */
+    public <T> List<T> executeSql2(String sql, RowMapper<T> mapper, Object[] args) {
+        List<T> list = this.jdbccontextList(new PreparedStatementStrategy() {
+            @Override
+            public PreparedStatement newStatement(Connection conn) throws SQLException {
+                return conn.prepareStatement(sql);
+            }
+        }, new RowMapResultSet<T>(mapper), args);
+        return list;
+    }
+
+    /**
+     * selectOne
+     */
+    public <T> T executeSql(String sql, RowMapper<T> mapper, Object[] args) {
+        T data = this.jdbccontext(new PreparedStatementStrategy() {
+            @Override
+            public PreparedStatement newStatement(Connection conn) throws SQLException {
+                return conn.prepareStatement(sql);
+            }
+        }, new RowMapResultSet<T>(mapper), args);
+        return data;
+    }
+
+    /**
+     * 인자없이 list return
+     */
+    public <T> List<T> executeSql(String sql, RowMapper<T> mapper) {
+        List<T> list = this.jdbccontextList(new PreparedStatementStrategy() {
+            @Override
+            public PreparedStatement newStatement(Connection conn) throws SQLException {
+                return conn.prepareStatement(sql);
+            }
+        }, new RowMapResultSet<T>(mapper));
+        return list;
+    }
+
+    public void updateSql(String sql, Object... args) {
         this.jdbccontext(new PreparedStatementStrategy() {
             @Override
             public PreparedStatement newStatement(Connection conn) throws SQLException {
-                PreparedStatement ps = conn.prepareStatement(query);
+                return conn.prepareStatement(sql);
+            }
+        }, args);
+    }
 
-                ps.setString(1, user.getId());
-                ps.setString(2, user.getName());
-                ps.setString(3, user.getPassword());
-                return ps;
+    public void updateSql(String sql) {
+        this.jdbccontext(new PreparedStatementStrategy() {
+            @Override
+            public PreparedStatement newStatement(Connection conn) throws SQLException {
+                return conn.prepareStatement(sql);
             }
         });
     }
+
 }
