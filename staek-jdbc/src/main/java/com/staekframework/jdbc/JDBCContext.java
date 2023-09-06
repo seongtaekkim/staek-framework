@@ -2,10 +2,7 @@ package com.staekframework.jdbc;
 
 import com.staekframework.test.User.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 
 /**
@@ -101,6 +98,52 @@ public class JDBCContext {
 
         }
     }
+
+    /**
+     *
+     *
+     *  selectOne
+     */
+    public <E> E jdbccontext(PreparedStatementStrategy st, ResultSetStrategy rs, Object... args) {
+        Connection conn = datasource.newConnection();
+
+        PreparedStatement ps = null;
+
+        if (args != null) {
+            for (int i = 0; i < args.length; i++) {
+                Object arg = args[i];
+
+                try {
+                    ps.setString(i+1, arg.toString());
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        try {
+            ps = st.newStatement(conn);
+
+            ResultSet resultSet = ps.executeQuery();
+            Object data = rs.getData(resultSet);
+            return (E)data;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+    }
+
 
     public void executeSql(String query) {
         this.jdbccontext(new PreparedStatementStrategy() {

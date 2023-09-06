@@ -12,6 +12,17 @@ import java.util.List;
 
 public class Main {
 
+    /**
+     *
+     * getOne(args ...)
+     * getAll()
+     * getCount()
+     *
+     * delete(String)
+     * deleteAll()
+     *
+     *
+     */
     public static void main(String[] args) {
 
         /**
@@ -23,17 +34,17 @@ public class Main {
         userDao.setContext(context);
 //        userDao.createTable();
 //        userDao.delete("1");
-        userDao.deleteAll();
-
+        context.executeSql("delete from user");
 
         User user = new User();
         user.setId("1");
         user.setName("kim");
-        userDao.add(user);
+        context.executeSql("insert into user(id,name) values(?,?)", user);
 
         user.setId("2");
         user.setName("spring");
-        userDao.add(user);
+        context.executeSql("insert into user(id,name) values(?,?)", user);
+
 
         User user1 = userDao.get("1");
         System.out.println("get result ---  id:" + user1.getId() + " name:" + user1.getName() );
@@ -41,8 +52,14 @@ public class Main {
         System.out.println("count: " + userDao.getCount());
 
 
+        System.out.println("getALL==============================");
         List<User> list = userDao.getAll();
         Arrays.stream(list.toArray()).forEach(System.out::println);
+
+        System.out.println("getOne =============================");
+        User user2 = userDao.get("2");
+        System.out.println(user2.toString());
+
 
     }
 }
