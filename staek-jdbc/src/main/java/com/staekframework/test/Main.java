@@ -48,9 +48,6 @@ public class Main {
         context.executeSql("insert into user(id,name,password) values(?,?,?)", user);
 
 
-        User user1 = userDao.get("1");
-        System.out.println("get result ---  id:" + user1.getId() + " name:" + user1.getName() );
-
         System.out.println("count: " + userDao.getCount());
 
 
@@ -59,7 +56,7 @@ public class Main {
         Arrays.stream(list.toArray()).forEach(System.out::println);
 
         System.out.println("getOne =============================");
-        User user2 = userDao.getOne("1","11w11");
+        User user2 = userDao.getOne("1","1111");
         if (user2 != null)
             System.out.println(user2.toString());
 

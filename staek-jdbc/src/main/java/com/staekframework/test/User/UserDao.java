@@ -2,8 +2,6 @@ package com.staekframework.test.User;
 
 import com.staekframework.jdbc.*;
 
-import com.staekframework.test.strategy.GetAllStrategy;
-
 import java.sql.*;
 import java.util.List;
 
@@ -73,43 +71,6 @@ public class UserDao {
             }
         }, new RowMapResultSet(rowMapper), args);
         return object;
-    }
-    public User get(String id) {
-
-        Connection connection = datasource.newConnection();
-
-        ResultSet resultSet = null;
-        PreparedStatement ps = null;
-        User user = new User();
-        try {
-
-            ps = new GetAllStrategy().newStatement(connection);
-            ps.setString(1, id);
-            resultSet = ps.executeQuery();
-            resultSet.next();
-            user.setId(resultSet.getString("id"));
-            user.setName(resultSet.getString("name"));
-            user.setPassword(resultSet.getString("password"));
-            return user;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            try {
-                ps.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
     public int getCount() {
