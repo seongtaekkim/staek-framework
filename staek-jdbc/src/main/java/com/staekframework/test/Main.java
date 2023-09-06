@@ -59,8 +59,9 @@ public class Main {
         Arrays.stream(list.toArray()).forEach(System.out::println);
 
         System.out.println("getOne =============================");
-        User user2 = userDao.getOne("2","2222");
-        System.out.println(user2.toString());
+        User user2 = userDao.getOne("1","11w11");
+        if (user2 != null)
+            System.out.println(user2.toString());
 
 
     }

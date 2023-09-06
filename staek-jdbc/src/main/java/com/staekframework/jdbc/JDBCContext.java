@@ -1,5 +1,6 @@
 package com.staekframework.jdbc;
 
+import com.staekframework.jdbc.util.DataAccessUtil;
 import com.staekframework.test.User.User;
 
 import java.sql.*;
@@ -109,7 +110,6 @@ public class JDBCContext {
 
         PreparedStatement ps = null;
 
-
         try {
             ps = st.newStatement(conn);
             if (args != null) {
@@ -118,11 +118,8 @@ public class JDBCContext {
                     ps.setString(i+1, arg.toString());
                 }
             }
-
             ResultSet resultSet = ps.executeQuery();
-            List<T> data = (List<T>) rs.getData(resultSet);
-            T next = data.iterator().next();
-            return next;
+            return DataAccessUtil.SelectOne((List<T>)rs.getData(resultSet));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
