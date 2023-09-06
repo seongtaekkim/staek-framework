@@ -29,8 +29,7 @@ public class Main {
          */
         UserDao userDao = new DaoFactory().newUserDao();
         JDBCContext context = new JDBCContext(new DaoFactory().getDatasource());
-        userDao.setContext(context);
-        userDao.createTable();
+//        userDao.createTable();
 //        userDao.delete("1");
         context.executeSql("delete from user");
 
@@ -65,5 +64,9 @@ public class Main {
         System.out.println("getList ===========================");
         List<User> spring = userDao.getList("spring");
         Arrays.stream(spring.toArray()).forEach(System.out::println);
+
+        System.out.println("delete==========================");
+        userDao.delete("1");
+        System.out.println(userDao.getOne("1","1111"));
     }
 }

@@ -4,6 +4,7 @@ import com.staekframework.jdbc.util.DataAccessUtil;
 import com.staekframework.test.User.User;
 
 import java.sql.*;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -151,6 +152,36 @@ public class JDBCContext {
             }
             ResultSet resultSet = ps.executeQuery();
             return DataAccessUtil.SelectOne((List<T>)rs.getData(resultSet));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+    }
+
+    public void jdbccontext(PreparedStatementStrategy st, Object... args) {
+        Connection conn = datasource.newConnection();
+
+        PreparedStatement ps = null;
+        try {
+            ps = st.newStatement(conn);
+            if (args != null) {
+                for (int i = 0 ; i < args.length ; i++)
+                    ps.setString(i+1, args[i].toString());
+            } else
+                throw new NullPointerException();
+
+            ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
