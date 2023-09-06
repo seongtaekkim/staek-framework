@@ -1,6 +1,5 @@
 package com.staekframework.jdbc;
 
-import javax.xml.transform.Result;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -18,6 +17,6 @@ public class RowMapResultSet<T> implements ResultSetStrategy<List<T>> {
 
         while (rs.next())
             list.add(mapper.row(rs));
-        return null;
+        return list;
     }
 }

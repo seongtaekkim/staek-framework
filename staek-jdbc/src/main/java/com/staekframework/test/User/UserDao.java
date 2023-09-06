@@ -2,9 +2,8 @@ package com.staekframework.test.User;
 
 import com.staekframework.jdbc.*;
 
-import com.staekframework.test.strategy.GetAllStrategy;
-
 import java.sql.*;
+import java.util.List;
 
 /**
  * TODO User 관련 업무에 대한 DAO 이다.
@@ -28,45 +27,50 @@ public class UserDao {
     }
 
     public void add(User user) {
-        this.jdbccontext.executeSql("insert into user(id,name) values(?,?)", user);
-
+        this.jdbccontext.executeSql("insert into user(id,name,passwird) values(?,?,?)", user);
     }
 
-    public User get(String id) {
-
+    public List<User> getAll() {
         Connection connection = datasource.newConnection();
+        List<User> list = null;
 
-        ResultSet resultSet = null;
-        PreparedStatement ps = null;
-        User user = new User();
-        try {
-
-            ps = new GetAllStrategy().newStatement(connection);
-            ps.setString(1, id);
-            resultSet = ps.executeQuery();
-            resultSet.next();
-            user.setId(resultSet.getString("id"));
-            user.setName(resultSet.getString("name"));
+        RowMapper<User> rowMapper = rs -> {
+            User user = new User();
+            user.setId(rs.getString("ID"));
+            user.setName(rs.getString("NAME"));
+            user.setPassword(rs.getString("PASSWORD"));
             return user;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+        };
+
+        List list1 = this.jdbccontext.jdbccontextList(new PreparedStatementStrategy() {
+            @Override
+            public PreparedStatement newStatement(Connection conn) throws SQLException {
+                return conn.prepareStatement("select id, name, password from user");
             }
-            try {
-                ps.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+        }, new RowMapResultSet(rowMapper));
+        return list1;
+    }
+
+
+    public User getOne(Object... args) {
+        Connection connection = datasource.newConnection();
+        RowMapper<User> rowMapper = new RowMapper<>() {
+            @Override
+            public User row(ResultSet rs) throws SQLException {
+                User user = new User();
+                user.setId(rs.getString("id"));
+                user.setName(rs.getString("name"));
+                user.setPassword(rs.getString("password"));
+                return user;
             }
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+        };
+        User object = this.jdbccontext.jdbccontext(new PreparedStatementStrategy() {
+            @Override
+            public PreparedStatement newStatement(Connection conn) throws SQLException {
+                return conn.prepareStatement("select id, name, password from user where id = ? AND password = ?");
             }
-        }
+        }, new RowMapResultSet(rowMapper), args);
+        return object;
     }
 
     public int getCount() {
@@ -95,7 +99,8 @@ public class UserDao {
 
         String sql = "CREATE TABLE IF NOT EXISTS user (\n"
                 + "	id integer PRIMARY KEY,\n"
-                + "	name text NOT NULL\n"
+                + "	name text NOT NULL,\n"
+                + " password text NOT NULL\n"
                 + ");";
 
         Statement stmt = null;
@@ -111,7 +116,12 @@ public class UserDao {
 
         Connection conn = datasource.newConnection();
 
-        ResultSet rs = null;
+//        this.jdbccontext.jdbccontext(new PreparedStatementStrategy() {
+//            @Override
+//            public PreparedStatement newStatement(Connection conn) throws SQLException {
+//                return conn.prepareStatement("delete from user where id = ?");
+//            }
+//        });
         PreparedStatement ps = null;
         try {
             ps = conn.prepareStatement("delete from user where id = ?");
@@ -123,5 +133,25 @@ public class UserDao {
         }
     }
 
+    public List<User> getList(String name) {
+        Connection connection = datasource.newConnection();
 
+        RowMapper<User> rowMapper = new RowMapper<>() {
+            @Override
+            public User row(ResultSet rs) throws SQLException {
+                User user = new User();
+                user.setId(rs.getString("id"));
+                user.setName(rs.getString("name"));
+                user.setPassword(rs.getString("password"));
+                return user;
+            }
+        };
+        List<User> users = this.jdbccontext.jdbccontextList(new PreparedStatementStrategy() {
+            @Override
+            public PreparedStatement newStatement(Connection conn) throws SQLException {
+                return conn.prepareStatement("select id, name, password from user where name = ?");
+            }
+        }, new RowMapResultSet<User>(rowMapper), name);
+        return users;
+    }
 }
