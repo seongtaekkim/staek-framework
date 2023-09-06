@@ -28,10 +28,7 @@ public class Main {
          * dao factory 에서 다시 UserDao 객체만 생성해도 모든 dml 을 호출할 수 있게 되었다.
          */
         UserDao userDao = new DaoFactory().newUserDao();
-        JDBCContext context = new JDBCContext(new DaoFactory().getDatasource());
 //        userDao.createTable();
-//        userDao.delete("1");
-//        context.executeSql("delete from user");
         userDao.deleteAll();
 
         User user = new User();
