@@ -31,32 +31,33 @@ public class UserDao {
         }
     };
 
+
     public void delete(String id) {
-        this.jdbccontext.updateSql("delete from user where id = ?", id);
+        this.jdbccontext.updateSql("delete from users where id = ?", id);
     }
 
     public void deleteAll() {
-        this.jdbccontext.updateSql("delete from user");
+        this.jdbccontext.updateSql("delete from users");
     }
 
     public void insert(User user) {
-        this.jdbccontext.updateSql("insert into user(id,name,password) values(?,?,?)", user.getId(), user.getName(), user.getPassword());
+        this.jdbccontext.updateSql("insert into users(id,name,password) values(?,?,?)", user.getId(), user.getName(), user.getPassword());
     }
 
     public List<User> getAll() {
-        return this.jdbccontext.executeSql("select id, name, password from user", rowMapper);
+        return this.jdbccontext.executeSql("select id, name, password from users", rowMapper);
     }
 
     public User getOne(Object... args) {
-         return this.jdbccontext.executeSql("select id, name, password from user where id = ? AND password = ?", rowMapper, args);
+         return this.jdbccontext.executeSql("select id, name, password from users where id = ? AND password = ?", rowMapper, args);
     }
 
     public List<User> getList(Object... args) {
-        return this.jdbccontext.executeSql2("select id, name, password from user where name = ?", rowMapper, args);
+        return this.jdbccontext.executeSql2("select id, name, password from users where name = ?", rowMapper, args);
     }
 
     public int getCount() {
-        return this.jdbccontext.countSql("select count(*) as count from user");
+        return this.jdbccontext.countSql("select count(*) as count from users");
     }
 
 }
