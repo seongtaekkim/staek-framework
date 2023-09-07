@@ -214,7 +214,7 @@ public class JDBCContext {
         return this.jdbccontext(new PreparedStatementStrategy() {
             @Override
             public PreparedStatement newStatement(Connection conn) throws SQLException {
-                return conn.prepareStatement("select count(*) as count from user");
+                return conn.prepareStatement("select count(*) as count from users");
             }
         }, new ResultSetStrategy<Integer>() {
             @Override
