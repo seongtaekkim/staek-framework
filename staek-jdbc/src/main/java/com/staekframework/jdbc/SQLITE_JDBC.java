@@ -4,6 +4,7 @@ import com.staekframework.jdbc.yaml.InitYaml;
 import org.sqlite.SQLiteConfig;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 
@@ -18,12 +19,13 @@ public class SQLITE_JDBC implements Datasource {
 		SQLiteConfig config = new SQLiteConfig();
 		Connection conn = null;
 		try {
-			conn = org.sqlite.JDBC.createConnection(url, config.toProperties());
+//			conn = org.sqlite.JDBC.createConnection(url, config.toProperties());
+			conn = DriverManager.getConnection(url, "sa", "");
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
 		return conn;
 
 	}
-	
+
 }

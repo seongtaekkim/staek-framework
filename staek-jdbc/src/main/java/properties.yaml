@@ -1,4 +1,5 @@
 DEFAULT: "com.staekframework.jdbc.SQLITE_JDBC"
 
 SQLITE_JDBC:
-  URL: "jdbc:sqlite:[ROOT]/data/dev.db"
+#  URL: "jdbc:sqlite:[ROOT]/data/dev.db"
+  URL: "jdbc:h2:[ROOT]/data/dev2.db"
