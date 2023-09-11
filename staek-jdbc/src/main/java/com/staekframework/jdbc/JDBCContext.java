@@ -39,7 +39,7 @@ public class JDBCContext {
                 throw new RuntimeException(e);
             }
             try {
-                ps.close();
+                if (ps != null) ps.close();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }

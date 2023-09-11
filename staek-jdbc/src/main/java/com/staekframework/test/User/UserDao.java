@@ -23,11 +23,7 @@ public class UserDao {
     private static RowMapper<User> rowMapper = new RowMapper<>() {
         @Override
         public User row(ResultSet rs) throws SQLException {
-            User user = new User();
-            user.setId(rs.getString("id"));
-            user.setName(rs.getString("name"));
-            user.setPassword(rs.getString("password"));
-            return user;
+            return new User(rs.getString("id"), rs.getString("name"),rs.getString("password"));
         }
     };
 
@@ -60,4 +56,22 @@ public class UserDao {
         return this.jdbccontext.countSql("select count(*) as count from users");
     }
 
+        public void createTable() {
+            Datasource datasource = new DaoFactory().getDatasource();
+            Connection conn = datasource.newConnection();
+
+        String sql = "CREATE TABLE IF NOT EXISTS users (\n"
+                + "	id integer PRIMARY KEY,\n"
+                + "	name text NOT NULL,\n"
+                + " password text NOT NULL\n"
+                + ");";
+
+        Statement stmt = null;
+        try {
+            stmt = conn.createStatement();
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
