@@ -2,7 +2,6 @@ package com.staekframework.jdbc.yaml;
 
 import java.io.File;
 import java.net.InetAddress;
-import java.util.Arrays;
 import java.util.Map;
 
 
@@ -53,8 +52,8 @@ public class InitYaml {
 		return s;
 	}
 
-	public String getValue(String key) {
-		String s = (String) ((Map<String, Object>)map.get("SQLITE_JDBC")).get("URL");
+	public String getJDBC(String key) {
+		String s = (String) ((Map<String, Object>)map.get("SQLITE_JDBC")).get(key);
 		s = convert$(s);
 		return s;
 	}

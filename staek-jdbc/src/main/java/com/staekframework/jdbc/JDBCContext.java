@@ -1,11 +1,7 @@
 package com.staekframework.jdbc;
 
 import com.staekframework.jdbc.util.DataAccessUtil;
-import com.staekframework.test.User.User;
-
 import java.sql.*;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 /**

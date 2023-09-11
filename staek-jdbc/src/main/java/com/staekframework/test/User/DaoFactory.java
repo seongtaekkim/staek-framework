@@ -1,8 +1,7 @@
 package com.staekframework.test.User;
 
 import com.staekframework.jdbc.Datasource;
-import com.staekframework.jdbc.JDBC;
-import com.staekframework.jdbc.SQLITE_JDBC;
+import com.staekframework.jdbc.JDBCConnection;
 
 /**
  * TODO data access object를 생성하는 factory class
@@ -15,6 +14,6 @@ public class DaoFactory {
     }
 
     public Datasource getDatasource() {
-        return new SQLITE_JDBC();
+        return new JDBCConnection();
     }
 }
