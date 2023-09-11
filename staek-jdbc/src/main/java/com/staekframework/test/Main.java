@@ -15,7 +15,6 @@ public class Main {
      * getList(args ...)
      * getCount()
      *
-     *
      */
     public static void main(String[] args) {
 
@@ -37,23 +36,23 @@ public class Main {
         user = new User("3","spring","2222");
         userDao.insert(user);
 
-        System.out.println("count: " + userDao.getCount());
+        System.out.println("count: " + userDao.count());
 
         System.out.println("getALL==============================");
-        List<User> list = userDao.getAll();
+        List<User> list = userDao.selectAll();
         Arrays.stream(list.toArray()).forEach(System.out::println);
 
         System.out.println("getOne =============================");
-        User user2 = userDao.getOne("1","1111");
+        User user2 = userDao.selectOne("1","1111");
         if (user2 != null)
             System.out.println(user2.toString());
 
         System.out.println("getList ===========================");
-        List<User> spring = userDao.getList("spring");
+        List<User> spring = userDao.selectList("spring");
         Arrays.stream(spring.toArray()).forEach(System.out::println);
 
         System.out.println("delete==========================");
         userDao.delete("1");
-        System.out.println(userDao.getOne("1","1111"));
+        System.out.println(userDao.selectOne("1","1111"));
     }
 }

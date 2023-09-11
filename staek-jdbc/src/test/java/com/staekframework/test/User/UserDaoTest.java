@@ -37,7 +37,7 @@ class UserDaoTest {
     @Test
     @Order(2)
     void getAll() {
-        List<User> list = userDao.getAll();
+        List<User> list = userDao.selectAll();
         list.stream().forEach(System.out::println);
     }
 
