@@ -27,13 +27,13 @@ public class JDBC implements Datasource {
 //            throw new RuntimeException(e);
 //        }
 
-        Class<?> aClass = null;
-        try {
-            // org.sqlite.JDBC static 생성자 호출
-            aClass = Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+//        Class<?> aClass = null;
+//        try {
+//            // org.sqlite.JDBC static 생성자 호출
+//            aClass = Class.forName(className);
+//        } catch (ClassNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
 
         Connection conn = null;
         try {

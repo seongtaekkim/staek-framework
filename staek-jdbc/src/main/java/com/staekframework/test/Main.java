@@ -1,12 +1,8 @@
 package com.staekframework.test;
 
-import com.staekframework.jdbc.Datasource;
-import com.staekframework.jdbc.JDBC;
-import com.staekframework.jdbc.JDBCContext;
 import com.staekframework.test.User.*;
 
 
-import java.sql.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,24 +24,17 @@ public class Main {
          * dao factory 에서 다시 UserDao 객체만 생성해도 모든 dml 을 호출할 수 있게 되었다.
          */
         UserDao userDao = new DaoFactory().newUserDao();
-//        userDao.createTable();
+       userDao.createTable();
         userDao.deleteAll();
 
-        User user = new User();
-        user.setId("1");
-        user.setName("kim");
-        user.setPassword("1111");
+        User user = new User("1","kim","1111");
         userDao.insert(user);
 
-        user.setId("2");
-        user.setName("spring");
-        user.setPassword("2222");
+        user = new User("2","spring","2222");
         userDao.insert(user);
 
 
-        user.setId("3");
-        user.setName("spring");
-        user.setPassword("2222");
+        user = new User("3","spring","2222");
         userDao.insert(user);
 
         System.out.println("count: " + userDao.getCount());
