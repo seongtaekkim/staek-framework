@@ -22,9 +22,8 @@ public class TomcatTest {
 	public static void main(String[] args) throws Exception {
 
 		/**
-		 * TODO Tomat jar 를 이용해서 서버를 띄운다.
+		 * TODO Tomat jar 를 이용해서 웹서버를 실행한다.
 		 */
-		/*
 		String root = new File(".").getAbsolutePath();
 
 		String baseDir = root + File.separatorChar + "temp";
@@ -39,23 +38,27 @@ public class TomcatTest {
 
 		Context context = tomcat.addContext("/", baseDir);
 
-		HttpServlet board = new ServletTest();
-
-		tomcat.addServlet("/", "test", board);
-		context.addServletMappingDecoded("/test", "test");
+		/**
+		 * 임베디드 톰캣을 서버로 사용하였음
+		 * - 우선은 하드코딩으로 servlet 자원과 매핑코드를 작성했으나
+		 * - di를 이용해서 주입을 하는것으로 개선할 예정이다.
+		 */
+		UserServlet userServlet = new UserServlet();
+		tomcat.addServlet("/", "user", userServlet);
+		context.addServletMappingDecoded("/user", "user");
 
 		tomcat.start();
-		tomcat.getServer().await();
-		 */
+		System.out.println("started tomcat server");
+		tomcat.getServer().await(); // 요청대기
 
 
 		/**
 		 * TODO staek-di.jar 를 이용해서 생성한 인스턴스를 가져올 수 있다.
 		 */
-		RepositoryClass object = ScanAndNewInstance.getObject(RepositoryClass.class);
-		System.out.println(object);
-		ServiceClass object1 = ScanAndNewInstance.getObject(ServiceClass.class);
-		System.out.println(object1);
+//		RepositoryClass object = ScanAndNewInstance.getObject(RepositoryClass.class);
+//		System.out.println(object);
+//		ServiceClass object1 = ScanAndNewInstance.getObject(ServiceClass.class);
+//		System.out.println(object1);
 
 	}
 }
