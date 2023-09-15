@@ -1,9 +1,5 @@
 package com.staekframework.web;
 
-import com.staekframework.di.ScanAndNewInstance;
-import com.staekframework.test.RepositoryClass;
-import com.staekframework.test.ServiceClass;
-import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;
 
 import javax.servlet.http.HttpServlet;
@@ -36,16 +32,23 @@ public class TomcatTest {
 		tomcat.setBaseDir(baseDir);
 		tomcat.setPort(webPort);
 
-		Context context = tomcat.addContext("/", baseDir);
+//		Context context = tomcat.addContext("/", baseDir);
 
 		/**
 		 * 임베디드 톰캣을 서버로 사용하였음
 		 * - 우선은 하드코딩으로 servlet 자원과 매핑코드를 작성했으나
 		 * - di를 이용해서 주입을 하는것으로 개선할 예정이다.
 		 */
-		UserServlet userServlet = new UserServlet();
-		tomcat.addServlet("/", "user", userServlet);
-		context.addServletMappingDecoded("/user", "user");
+//		UserServlet userServlet = new UserServlet();
+//		tomcat.addServlet("/", "user", userServlet);
+//		context.addServletMappingDecoded("/user", "user");
+
+		tomcat.addWebapp("", "/Users/staek/Documents/staek-framework/staekframework/web");
+
+//		String characterSet = init.getCharacterSet();
+//		System.out.println("uri characterSet [" + characterSet + "]");
+//		Connector conn = tomcat.getConnector();
+//		conn.setURIEncoding(characterSet);
 
 		tomcat.start();
 		System.out.println("started tomcat server");

@@ -16,7 +16,7 @@ import java.util.List;
 public class UserServlet extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         // 클라이언트 값을 꺼내기 전에 문자셋 설정
         req.setCharacterEncoding("UTF-8");
         String id = req.getParameter("id");
