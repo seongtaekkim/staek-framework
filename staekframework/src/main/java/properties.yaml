@@ -7,3 +7,9 @@ SQLITE_JDBC:
 #  URL: "jdbc:h2:[ROOT]/data/h2.db"
 #  USERNAME: "sa"
 #  PASSWORD: ""
+
+PORT: 18080
+WEB_DIR:
+  DEFAULT: "[ROOT]/web"
+WEB_TEMP_DIR:
+  DEFAULT: "[ROOT]/temp"
