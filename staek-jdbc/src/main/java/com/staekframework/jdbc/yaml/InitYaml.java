@@ -13,10 +13,15 @@ public class InitYaml {
 		return thisInc;
 	}
 
-	private Map<String, Object> map = null;
-	private String hostName = null;
-	private String root = null;
+	private Map<String, Object> map;
+	private String hostName;
+	private String root;
 	private static final String filename = "properties";
+
+	private int port;
+	private String webDir;
+	private String webTmpDir;
+
 	private InitYaml() {
 
 		this.map = LoadYaml.getMap(filename);
@@ -42,10 +47,31 @@ public class InitYaml {
 		// root/web/WEB-INF/classes -> webAppRoot
 		file = file.getParentFile().getParentFile().getParentFile().getParentFile();
         this.root = file.getAbsolutePath();
-		System.out.println("this.root: +" + this.root);
+		this.port = (int) map.get("PORT");
+
+		/**
+		 * 항목이 없으면 에러남. 나중에 처리해야 함
+		 */
+		this.webDir = (String) ((Map<String, Object>) map.get("WEB_DIR")).get("DEFAULT");
+		this.webTmpDir = (String) ((Map<String, Object>)map.get("WEB_TEMP_DIR")).get("DEFAULT");
+		this.webDir = replaceRootToString(this.webDir);
+		this.webTmpDir = replaceRootToString(this.webTmpDir);
+
+
 	}
 
-	private String convert$(String s) {
+	public int port() {
+		return this.port;
+	}
+
+	public String webDir() {
+		return this.webDir;
+	}
+	public String webTmpDir() {
+		return this.webTmpDir;
+	}
+
+	private String replaceRootToString(String s) {
 		if (this.root != null) {
 			s = s.replace("[ROOT]", this.root);
 		}
@@ -54,7 +80,7 @@ public class InitYaml {
 
 	public String getJDBC(String key) {
 		String s = (String) ((Map<String, Object>)map.get("SQLITE_JDBC")).get(key);
-		s = convert$(s);
+		s = replaceRootToString(s);
 		return s;
 	}
 
