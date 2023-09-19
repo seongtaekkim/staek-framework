@@ -1,5 +1,6 @@
 package com.staekframework.web;
 
+
 import com.staekframework.di.ScanAndNewInstance;
 import com.staekframework.jdbc.yaml.InitYaml;
 import com.staekframework.test.RepositoryClass;
@@ -34,20 +35,32 @@ public class TomcatTest {
 
 		Tomcat tomcat = new Tomcat();
 		tomcat.setPort(webPort);
-
+		System.out.println("init.webTmpDir() : " + init.webTmpDir());
 		tomcat.setBaseDir( init.webTmpDir());
-		tomcat.setPort(webPort);
 
-		Context context = tomcat.addContext("/",  init.webTmpDir());
+		System.out.println("port:" + webPort);
+		System.out.println("webdir: " + init.webDir());
+		System.out.println("webtemp: " + init.webTmpDir());
+
 
 		/**
 		 * 임베디드 톰캣을 서버로 사용하였음
-		 * - 우선은 하드코딩으로 servlet 자원과 매핑코드를 작성했으나
-		 * - di를 이용해서 주입을 하는것으로 개선할 예정이다.
+		 * - addContext ->  addServlet -> addServletMappingDecoded 순서로 지정하면
+		 * - 해당하는 리소스에 매핑하여 접근할 수 있음
+		 *
+		 * - addWebapp를 설정하면 web.xml의 servlet 설정을 따라간다.
 		 */
-		UserServlet userServlet = new UserServlet();
-		tomcat.addServlet("/", "user", userServlet);
-		context.addServletMappingDecoded("/user", "user");
+//		Context context = tomcat.addContext("/",  init.webTmpDir());
+//		UserServlet userServlet = new UserServlet();
+//		tomcat.addServlet("/", "user", userServlet);
+//		context.addServletMappingDecoded("/user", "user");
+
+		tomcat.addWebapp("", init.webDir());
+
+//		String characterSet = init.getCharacterSet();
+//		System.out.println("uri characterSet [" + characterSet + "]");
+//		Connector conn = tomcat.getConnector();
+//		conn.setURIEncoding(characterSet);
 
 		tomcat.start();
 		System.out.println("started tomcat server");
