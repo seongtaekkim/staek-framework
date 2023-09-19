@@ -13,8 +13,9 @@ public class MasterController extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+        System.out.println("???????????");
         String pathInfo = req.getPathInfo();
+        System.out.println(pathInfo);
         String url = null;
         if ("/user".equals(pathInfo)) {
             User user = new User();
