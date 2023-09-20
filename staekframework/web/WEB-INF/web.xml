@@ -4,7 +4,8 @@
 
 	<servlet>
 		<servlet-name>test</servlet-name>
-		<servlet-class>com.staekframework.web.MasterController
+		<servlet-class>
+			com.staekframework.web.MasterController
 		</servlet-class>
 	</servlet>
 

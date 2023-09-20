@@ -1,6 +1,5 @@
 package com.staekframework.web;
 
-import com.staekframework.test.User.DaoFactory;
 import com.staekframework.test.User.User;
 import com.staekframework.test.User.UserDao;
 
@@ -10,15 +9,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MasterController extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    private UserDao getDataByUserDao() {
-        UserDao userDao = new DaoFactory().newUserDao();
+
+    private UserDao getDataByUserDao(HttpServletRequest req) {
+        UserDao userDao = (UserDao) req.getServletContext().getAttribute("userDao");
         userDao.createTable();
         userDao.deleteAll();
         User user = new User("1","김성택","1111");
@@ -38,8 +37,7 @@ public class MasterController extends HttpServlet {
         if ("/user".equals(pathInfo)) {
             UserService user = new UserService();
             url = user.callList(req);
-            System.out.println( getDataByUserDao().selectAll().size());
-            List<com.staekframework.test.User.User> users = getDataByUserDao().selectAll();
+            List<User> users = getDataByUserDao(req).selectAll();
             req.setAttribute("users",users);
             User user1 = new User("10", "a", "b");
             req.setAttribute("data",user1);
