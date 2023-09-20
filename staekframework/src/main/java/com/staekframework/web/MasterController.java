@@ -1,7 +1,8 @@
 package com.staekframework.web;
 
-import com.staekframework.test.User.User;
-import com.staekframework.test.User.UserDao;
+
+import com.staekframework.business.User;
+import com.staekframework.business.UserDao;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
