@@ -1,6 +1,7 @@
 package com.staekframework.web;
 
 import com.staekframework.test.User.DaoFactory;
+import com.staekframework.test.User.User;
 import com.staekframework.test.User.UserDao;
 
 import javax.servlet.RequestDispatcher;
@@ -9,8 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MasterController extends HttpServlet {
@@ -21,11 +21,11 @@ public class MasterController extends HttpServlet {
         UserDao userDao = new DaoFactory().newUserDao();
         userDao.createTable();
         userDao.deleteAll();
-        com.staekframework.test.User.User user = new com.staekframework.test.User.User("1","김성택","1111");
+        User user = new User("1","김성택","1111");
         userDao.insert(user);
-        user = new com.staekframework.test.User.User("2","spring","2222");
+        user = new User("2","spring","2222");
         userDao.insert(user);
-        user = new com.staekframework.test.User.User("3","spring","2222");
+        user = new User("3","spring","2222");
         userDao.insert(user);
         return userDao;
     }
@@ -36,11 +36,13 @@ public class MasterController extends HttpServlet {
         System.out.println(pathInfo);
         String url = null;
         if ("/user".equals(pathInfo)) {
-            User user = new User();
+            UserService user = new UserService();
             url = user.callList(req);
             System.out.println( getDataByUserDao().selectAll().size());
             List<com.staekframework.test.User.User> users = getDataByUserDao().selectAll();
             req.setAttribute("users",users);
+            User user1 = new User("10", "a", "b");
+            req.setAttribute("data",user1);
             resp.setContentType("text/html; charset=UTF-8");
         }
         if (url == null) {

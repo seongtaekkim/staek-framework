@@ -1,22 +1,13 @@
-<%@ page import="java.util.List" %>
 <%@ page contentType="text/html; charset=UTF-8"%>
-<%
-	List list = (List) request.getAttribute("users");
-%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
 <body>
 <h1>유저목록</h1>
-<p><a href='add'>유저목록</a></p>
-<jsp:useBean id="users" scope="request" type="java.util.List"/>
+<p><a href='#'>유저목록</a></p>
 <c:forEach var="user" items="${users}">
-	${user.id},
-	${user.name},
-	${user.password},
+	<p>${user.id},${user.name},${user.password}</p>
 </c:forEach>
-<% for (int i=0 ; i<list.size() ; i++) { %>
-	<%=list.get(i).toString()%>
-<% }%>
 </body>
 </head>
 </html>

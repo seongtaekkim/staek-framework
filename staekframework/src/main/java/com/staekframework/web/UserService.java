@@ -2,7 +2,7 @@ package com.staekframework.web;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class User {
+public class UserService {
     public String callList(HttpServletRequest request) {
 
         String findStr = request.getParameter("findStr");
