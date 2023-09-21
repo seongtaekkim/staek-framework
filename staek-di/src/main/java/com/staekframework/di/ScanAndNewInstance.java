@@ -2,12 +2,12 @@ package com.staekframework.di;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 /**
  * @author staek
@@ -21,18 +21,57 @@ import java.util.ArrayList;
  */
 public class ScanAndNewInstance {
 
+    private static final String basePackage = "com.staekframework";
+
+    private static Map<String, Object> objectMap = new ConcurrentHashMap<>();
+
     /**
      * basePakage를 정한다.
      * scan한 클래스 리스트에서 @Inject 를 찾아 인스턴스를 생성한다.
      */
-    public static void showAllNewInstance() {
-        String basePackage = "com.staekframework.test";
+    public static void scanAndCreateInstance() {
         List<Class<?>> classes = scan(basePackage);
         for (Class<?> findClass : classes) {
             Inject annotation = findClass.getAnnotation(Inject.class);
             if (annotation != null) {
                 Object object = getObject(findClass);
-                System.out.println(object.getClass().getName() + " |||| " + object);
+                objectMap.put(findClass.getName(), object);
+            }
+        }
+
+        for (Class<?> findClass : classes) {
+            Repository annotation = findClass.getAnnotation(Repository.class);
+            if (annotation != null) {
+                Arrays.stream(findClass.getDeclaredConstructors()).forEach(new Consumer<Constructor<?>>() {
+                    @Override
+                    public void accept(Constructor<?> f) {
+                        f.setAccessible(true);
+                        boolean flag = false;
+                        if (Arrays.stream(f.getParameterTypes()).count() == 1) {
+                            Class<?> findInterface = null;
+                            String findKey = null;
+                            for (String string : objectMap.keySet()) {
+                                Object o = objectMap.get(string);
+                                for (int i = 0 ; i < Arrays.stream(o.getClass().getInterfaces()).count() ; i++) {
+                                    findInterface = o.getClass().getInterfaces()[i];
+                                    if (findInterface.getName().equals(f.getParameterTypes()[0].getName())) {
+                                        flag = true;
+                                        findKey = string;
+                                        break ;
+                                    }
+                                }
+                                if (flag == true) break;
+                            }
+                            if (flag == false) {
+                                throw new NullPointerException("constructor parameter");
+                            }
+                            objectMap.put(f.getName()
+                                    , getInstance(findClass, objectMap.get(findKey), findInterface));
+                        } else {
+                            throw new RuntimeException("at least one parametar");
+                        }
+                    }
+                });
             }
         }
     }
@@ -139,5 +178,37 @@ public class ScanAndNewInstance {
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * constructor with one param
+     */
+    private static <T> T getInstance(Class<T> type, Object param, Class<?> parameterType) {
+        try {
+            return type.getConstructor(parameterType).newInstance(param);
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 특정 인스턴스를 objectMap에 등록한다.
+     */
+    public static void putInstance(Object o) {
+        objectMap.put(o.getClass().getName(), o);
+    }
+
+
+    /**
+     * 등록한 인스턴스 정보를 조회한다.
+     */
+    public static Map<String, Object> getObjectMap() {
+        return objectMap;
     }
 }

@@ -18,7 +18,7 @@ public class MasterController extends HttpServlet {
 
 
     private UserDao getDataByUserDao(HttpServletRequest req) {
-        UserDao userDao = (UserDao) req.getServletContext().getAttribute("userDao");
+        UserDao userDao = (UserDao) req.getServletContext().getAttribute("UserDao");
         userDao.createTable();
         userDao.deleteAll();
         User user = new User("1","김성택","1111");

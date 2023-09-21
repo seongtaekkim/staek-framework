@@ -1,15 +1,7 @@
 package com.staekframework.web;
 
-
-import com.staekframework.di.ScanAndNewInstance;
 import com.staekframework.jdbc.yaml.InitYaml;
-import com.staekframework.test.RepositoryClass;
-import com.staekframework.test.ServiceClass;
-import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;
-import org.yaml.snakeyaml.Yaml;
-
-import javax.servlet.http.HttpServlet;
 import java.io.File;
 
 /**

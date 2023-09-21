@@ -1,5 +1,6 @@
 package com.staekframework.business;
 
+import com.staekframework.di.Repository;
 import com.staekframework.jdbc.Datasource;
 import com.staekframework.jdbc.JDBCContext;
 import com.staekframework.jdbc.RowMapper;
@@ -10,10 +11,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
+@Repository
 public class UserDao {
 
     private final JDBCContext jdbccontext;
 
+    //@Wireinject
     public UserDao(Datasource datasource) {
         this.jdbccontext = new JDBCContext(datasource);
     }
