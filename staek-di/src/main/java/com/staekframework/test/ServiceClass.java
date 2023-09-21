@@ -6,7 +6,6 @@ import com.staekframework.di.Inject;
 @Inject
 public class ServiceClass {
 
-    @Inject
+//    @Inject
     RepositoryClass repositoryClass; // package-private
-
 }
