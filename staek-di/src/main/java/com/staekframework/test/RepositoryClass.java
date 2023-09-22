@@ -7,7 +7,6 @@ import com.staekframework.di.WireInject;
 public class RepositoryClass {
     Datasource datasource;
 
-    @WireInject
     public RepositoryClass(Datasource datasource) {
         this.datasource = datasource;
     }
