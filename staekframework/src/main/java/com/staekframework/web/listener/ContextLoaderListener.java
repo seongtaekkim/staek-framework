@@ -22,13 +22,11 @@ public class ContextLoaderListener implements ServletContextListener {
          * 설정정보를 읽어오는 로직에서 생성 및 인스턴스등록할 수 있도록 변경 필요.
          */
         Datasource ds = new JDBCConnection();
-        ScanAndNewInstance.putInstance(ds);
-        ScanAndNewInstance.scanAndCreateInstance();
-        Iterator<Object> it = ScanAndNewInstance.getObjectMap().values().iterator();
-        while (it.hasNext()) {
-            Object o = it.next();
-            context.setAttribute(o.getClass().getSimpleName(), o);
-        }
+        ScanAndNewInstance scan = new ScanAndNewInstance();
+        scan.putInstance(ds);
+        scan.scanAndCreateInstance();
+        Object instance = scan.getInstance("com.staekframework.business.UserDao");
+        context.setAttribute("UserDao", instance);
     }
 
     @Override

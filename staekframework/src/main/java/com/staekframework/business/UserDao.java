@@ -16,7 +16,6 @@ public class UserDao {
 
     private final JDBCContext jdbccontext;
 
-    //@Wireinject
     public UserDao(Datasource datasource) {
         this.jdbccontext = new JDBCContext(datasource);
     }
