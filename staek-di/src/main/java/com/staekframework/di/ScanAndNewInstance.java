@@ -3,6 +3,7 @@ package com.staekframework.di;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
@@ -60,9 +61,9 @@ public class ScanAndNewInstance {
                                         break ;
                                     }
                                 }
-                                if (flag == true) break;
+                                if (flag) break;
                             }
-                            if (flag == false) {
+                            if (!flag) {
                                 throw new NullPointerException("constructor parameter");
                             }
                             instanceMap.put(f.getName()
@@ -74,6 +75,32 @@ public class ScanAndNewInstance {
                 });
             }
         }
+
+        /**
+         * TODO @WireInject 태그한 필드에 인스턴스 주입
+         */
+        Iterator<Object> it = instanceMap.values().iterator();
+        while (it.hasNext()) {
+            Object o = it.next();
+            Arrays.stream(o.getClass().getDeclaredFields()).forEach(new Consumer<Field>() {
+                @Override
+                public void accept(Field f) {
+                    if (f.getAnnotation(WireInject.class) != null) {
+                        // find instance at instanceMap
+                        Object instance = instanceMap.get(f.getType().getName());
+                        System.out.println(instance);
+                        f.setAccessible(true);
+                        try {
+                            f.set(o, instance);
+                        } catch (IllegalAccessException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+            });
+
+        }
+
     }
 
     /**
@@ -86,10 +113,10 @@ public class ScanAndNewInstance {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         String path = basePackageName.replace('.', '/');
 
-        List<Class<?>> classes = new ArrayList<Class<?>>();
+        List<Class<?>> classes = new ArrayList<>();
 
         try {
-            List<File> files = new ArrayList<File>();
+            List<File> files = new ArrayList<>();
             Enumeration<URL> resources = classLoader.getResources(path);
             while (resources.hasMoreElements()) {
                 URL resource = resources.nextElement();
@@ -116,13 +143,13 @@ public class ScanAndNewInstance {
      * @throws class 파일이 없을 시 예외처리 고민 필요.
      */
     private List<Class<?>> findClasses(File directory, String packageName) {
-        List<Class<?>> classes = new ArrayList<Class<?>>();
+        List<Class<?>> classes = new ArrayList<>();
         if (!directory.exists()) {
             return classes;
         }
 
         File[] files = directory.listFiles();
-        for (File file : files) {
+        for (File file : Objects.requireNonNull(files)) {
             if (file.isDirectory()) {
                 //System.out.println("[Directory] " + file.getAbsolutePath());
                 classes.addAll(findClasses(file, packageName + "." + file.getName()));
@@ -133,7 +160,7 @@ public class ScanAndNewInstance {
                 try {
                     classes.add(Class.forName(className, false, classLoader));
                 } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
+                    throw new RuntimeException("class not found: " + className);
                 }
             }
         }
@@ -212,12 +239,12 @@ public class ScanAndNewInstance {
     /**
      * registed instance
      */
-    public Map<String, Object> getInstance(String name) {
+    public Object getInstance(String name) {
         Object o = this.instanceMap.get(name);
         if (o == null) {
             throw new RuntimeException("not found instance :" + name);
         }
-        return instanceMap;
+        return o;
     }
 
 }
