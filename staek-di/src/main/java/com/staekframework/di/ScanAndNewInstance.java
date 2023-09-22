@@ -23,7 +23,7 @@ public class ScanAndNewInstance {
 
     private final String basePackage = "com.staekframework";
 
-    private final Map<String, Object> objectMap = new ConcurrentHashMap<>();
+    private final Map<String, Object> instanceMap = new ConcurrentHashMap<>();
 
     /**
      * basePakage를 정한다.
@@ -35,7 +35,7 @@ public class ScanAndNewInstance {
             Inject annotation = findClass.getAnnotation(Inject.class);
             if (annotation != null) {
                 Object object = getObject(findClass);
-                objectMap.put(findClass.getName(), object);
+                instanceMap.put(findClass.getName(), object);
             }
         }
 
@@ -50,8 +50,8 @@ public class ScanAndNewInstance {
                         if (Arrays.stream(f.getParameterTypes()).count() == 1) {
                             Class<?> findInterface = null;
                             String findKey = null;
-                            for (String string : objectMap.keySet()) {
-                                Object o = objectMap.get(string);
+                            for (String string : instanceMap.keySet()) {
+                                Object o = instanceMap.get(string);
                                 for (int i = 0 ; i < Arrays.stream(o.getClass().getInterfaces()).count() ; i++) {
                                     findInterface = o.getClass().getInterfaces()[i];
                                     if (findInterface.getName().equals(f.getParameterTypes()[0].getName())) {
@@ -65,8 +65,8 @@ public class ScanAndNewInstance {
                             if (flag == false) {
                                 throw new NullPointerException("constructor parameter");
                             }
-                            objectMap.put(f.getName()
-                                    , getInstance(findClass, objectMap.get(findKey), findInterface));
+                            instanceMap.put(f.getName()
+                                    , getInstance(findClass, instanceMap.get(findKey), findInterface));
                         } else {
                             throw new RuntimeException("at least one parametar");
                         }
@@ -201,15 +201,23 @@ public class ScanAndNewInstance {
      * 특정 인스턴스를 objectMap에 등록한다.
      */
     public void putInstance(Object o) {
-        objectMap.put(o.getClass().getName(), o);
+        instanceMap.put(o.getClass().getName(), o);
     }
 
 
+    public int size() {
+        return this.instanceMap.size();
+    }
+
     /**
-     * 등록한 인스턴스 정보를 조회한다.
+     * registed instance
      */
-    public Map<String, Object> getObjectMap() {
-        return objectMap;
+    public Map<String, Object> getInstance(String name) {
+        Object o = this.instanceMap.get(name);
+        if (o == null) {
+            throw new RuntimeException("not found instance :" + name);
+        }
+        return instanceMap;
     }
 
 }
