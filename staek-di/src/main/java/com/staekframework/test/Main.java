@@ -23,21 +23,17 @@ public class Main {
 //        System.out.println(object1.repositoryClass);
 
 
-        System.out.println("클래스scan + 인스턴스 추가 ========================");
-
         /**
          * 특정 인스턴스 등록
          */
         Datasource ds = new ConcreteDataresource();
-        ScanAndNewInstance.putInstance(ds);
-        System.out.println("===");
-        ScanAndNewInstance.getObjectMap().keySet().forEach(System.out::println);
-        System.out.println("===");
+        ScanAndNewInstance scan = new ScanAndNewInstance();
+        scan.putInstance(ds);
         /**
          * 모든 클래스를 조회한다.
          * @Inject 인 클래스만 인스턴스를 생성한다.
          * 클래스 내부에 @Inject 가 있는 필드에 인스턴스를 생성해서 주입한다.
          */
-        ScanAndNewInstance.scanAndCreateInstance();
+        scan.scanAndCreateInstance();
     }
 }

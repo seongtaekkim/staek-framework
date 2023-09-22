@@ -21,21 +21,21 @@ import java.util.function.Consumer;
  */
 public class ScanAndNewInstance {
 
-    private static final String basePackage = "com.staekframework";
+    private final String basePackage = "com.staekframework";
 
-    private static Map<String, Object> objectMap = new ConcurrentHashMap<>();
+    private final Map<String, Object> instanceMap = new ConcurrentHashMap<>();
 
     /**
      * basePakage를 정한다.
      * scan한 클래스 리스트에서 @Inject 를 찾아 인스턴스를 생성한다.
      */
-    public static void scanAndCreateInstance() {
+    public void scanAndCreateInstance() {
         List<Class<?>> classes = scan(basePackage);
         for (Class<?> findClass : classes) {
             Inject annotation = findClass.getAnnotation(Inject.class);
             if (annotation != null) {
                 Object object = getObject(findClass);
-                objectMap.put(findClass.getName(), object);
+                instanceMap.put(findClass.getName(), object);
             }
         }
 
@@ -50,8 +50,8 @@ public class ScanAndNewInstance {
                         if (Arrays.stream(f.getParameterTypes()).count() == 1) {
                             Class<?> findInterface = null;
                             String findKey = null;
-                            for (String string : objectMap.keySet()) {
-                                Object o = objectMap.get(string);
+                            for (String string : instanceMap.keySet()) {
+                                Object o = instanceMap.get(string);
                                 for (int i = 0 ; i < Arrays.stream(o.getClass().getInterfaces()).count() ; i++) {
                                     findInterface = o.getClass().getInterfaces()[i];
                                     if (findInterface.getName().equals(f.getParameterTypes()[0].getName())) {
@@ -65,8 +65,8 @@ public class ScanAndNewInstance {
                             if (flag == false) {
                                 throw new NullPointerException("constructor parameter");
                             }
-                            objectMap.put(f.getName()
-                                    , getInstance(findClass, objectMap.get(findKey), findInterface));
+                            instanceMap.put(f.getName()
+                                    , getInstance(findClass, instanceMap.get(findKey), findInterface));
                         } else {
                             throw new RuntimeException("at least one parametar");
                         }
@@ -82,7 +82,7 @@ public class ScanAndNewInstance {
      * 결과를 리턴한다.
      *
      */
-    public static List<Class<?>> scan(String basePackageName) {
+    public List<Class<?>> scan(String basePackageName) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         String path = basePackageName.replace('.', '/');
 
@@ -115,7 +115,7 @@ public class ScanAndNewInstance {
      *
      * @throws class 파일이 없을 시 예외처리 고민 필요.
      */
-    private static List<Class<?>> findClasses(File directory, String packageName) {
+    private List<Class<?>> findClasses(File directory, String packageName) {
         List<Class<?>> classes = new ArrayList<Class<?>>();
         if (!directory.exists()) {
             return classes;
@@ -144,7 +144,7 @@ public class ScanAndNewInstance {
      * 입력반은 클래스 인스턴스를 생성한다.
      * @Inject 가 있는 필드의 인스턴스를 생성해 주입한다.
      */
-    public static <T> T getObject(Class<T> type) {
+    public <T> T getObject(Class<T> type) {
         T instance = getInstance(type);
         Arrays.stream(type.getDeclaredFields()).forEach(f -> {
             if (f.getAnnotation(Inject.class) != null) {
@@ -166,7 +166,7 @@ public class ScanAndNewInstance {
      * create instance
      * @apiNote  예외는 모두 unchecked 하였다.
      */
-    private static <T> T getInstance(Class<T> type) {
+    private <T> T getInstance(Class<T> type) {
         try {
             return type.getConstructor(null).newInstance();
         } catch (InstantiationException e) {
@@ -183,7 +183,7 @@ public class ScanAndNewInstance {
     /**
      * constructor with one param
      */
-    private static <T> T getInstance(Class<T> type, Object param, Class<?> parameterType) {
+    private <T> T getInstance(Class<T> type, Object param, Class<?> parameterType) {
         try {
             return type.getConstructor(parameterType).newInstance(param);
         } catch (InstantiationException e) {
@@ -200,15 +200,24 @@ public class ScanAndNewInstance {
     /**
      * 특정 인스턴스를 objectMap에 등록한다.
      */
-    public static void putInstance(Object o) {
-        objectMap.put(o.getClass().getName(), o);
+    public void putInstance(Object o) {
+        instanceMap.put(o.getClass().getName(), o);
     }
 
+
+    public int size() {
+        return this.instanceMap.size();
+    }
 
     /**
-     * 등록한 인스턴스 정보를 조회한다.
+     * registed instance
      */
-    public static Map<String, Object> getObjectMap() {
-        return objectMap;
+    public Map<String, Object> getInstance(String name) {
+        Object o = this.instanceMap.get(name);
+        if (o == null) {
+            throw new RuntimeException("not found instance :" + name);
+        }
+        return instanceMap;
     }
+
 }
