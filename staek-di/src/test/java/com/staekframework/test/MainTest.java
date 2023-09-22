@@ -5,6 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -64,5 +66,18 @@ class MainTest {
         assertDoesNotThrow(() -> {
             scan.scanAndCreateInstance();
         });
+    }
+
+    /**
+     * TODO @WireInject 태그한 필드에 주입한 인스턴스가 scan한 instanceMap의 인스턴스인지 확인
+     */
+    @Test
+    public void wire_inject() {
+        ScanAndNewInstance scan = new ScanAndNewInstance();
+        scan.putInstance(ds);
+        scan.scanAndCreateInstance();
+
+        ServiceClass service = (ServiceClass) scan.getInstance(ServiceClass.class.getName());
+        assertThat(scan.getInstance(RepositoryClass.class.getName())).isEqualTo(service.getRepositoryClass());
     }
 }

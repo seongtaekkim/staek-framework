@@ -3,6 +3,7 @@ package com.staekframework.web;
 
 import com.staekframework.business.User;
 import com.staekframework.business.UserDao;
+import com.staekframework.di.WireInject;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -16,9 +17,15 @@ public class MasterController extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 클래스가 이미 인스턴스가 생성된 경우여야만하는데
+     * 그 생각을 못함.. 나중에 개선점으로 남겨두자.
+     */
+    @WireInject
+    private UserDao userDao;
 
     private UserDao getDataByUserDao(HttpServletRequest req) {
-        UserDao userDao = (UserDao) req.getServletContext().getAttribute("UserDao");
+        userDao = (UserDao) req.getServletContext().getAttribute("UserDao");
         userDao.createTable();
         userDao.deleteAll();
         User user = new User("1","김성택","1111");
