@@ -26,14 +26,14 @@ public class Main {
        userDao.createTable();
         userDao.deleteAll();
 
-        User user = new User("1","kim","1111");
+        User user = new User("1","kim","1111", "10000");
         userDao.insert(user);
 
-        user = new User("2","spring","2222");
+        user = new User("2","spring","2222", "15000");
         userDao.insert(user);
 
 
-        user = new User("3","spring","2222");
+        user = new User("3","spring","2222", "20000");
         userDao.insert(user);
 
         System.out.println("count: " + userDao.count());
