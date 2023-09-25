@@ -39,7 +39,7 @@ class UserDaoTest {
 
     @Test
     void add() {
-        User user = new User("1", "kim", "1111");
+        User user = new User("1", "kim", "1111", "10000");
         userDao.insert(user);
         List<User> users = userDao.selectAll();
         assertThat(users).contains(user);
@@ -48,11 +48,11 @@ class UserDaoTest {
     @Test
     void count() {
         List<User> list = new ArrayList<>();
-        list.add(new User("1", "kim", "1111"));
-        list.add(new User("2", "kim", "1111"));
-        list.add(new User("3", "kim", "1111"));
-        list.add(new User("4", "kim", "1111"));
-        list.add(new User("5", "kim", "1111"));
+        list.add(new User("1", "kim", "1111", "10000"));
+        list.add(new User("2", "kim", "1111", "15000"));
+        list.add(new User("3", "kim", "1111", "15000"));
+        list.add(new User("4", "kim", "1111", "20000"));
+        list.add(new User("5", "kim", "1111", "20000"));
         for (User user : list) {
             userDao.insert(user);
         }
@@ -63,5 +63,16 @@ class UserDaoTest {
     void deleteAll() {
         userDao.deleteAll();
         assertThat(userDao.count()).isEqualTo(0);
+    }
+
+    @Test
+    void update_price() {
+        User user = new User("1", "kim", "1111", "10000");
+        userDao.insert(user);
+        user = new User("1", "kim", "1111", "15000");
+        userDao.update(user);
+        User vo = userDao.selectOne("1", "1111");
+        assertThat(vo.getPrice()).isEqualTo("15000");
+
     }
 }
