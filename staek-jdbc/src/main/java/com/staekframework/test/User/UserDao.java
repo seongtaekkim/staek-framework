@@ -79,4 +79,9 @@ public class UserDao {
             throw new RuntimeException(e);
         }
     }
+
+    public void update(User user) {
+        this.jdbccontext.updateSql("update users set price = ? where id = ?"
+                , user.getPrice(), user.getId());
+    }
 }

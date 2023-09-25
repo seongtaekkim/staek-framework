@@ -64,4 +64,15 @@ class UserDaoTest {
         userDao.deleteAll();
         assertThat(userDao.count()).isEqualTo(0);
     }
+
+    @Test
+    void update_price() {
+        User user = new User("1", "kim", "1111", "10000");
+        userDao.insert(user);
+        user = new User("1", "kim", "1111", "15000");
+        userDao.update(user);
+        User vo = userDao.selectOne("1", "1111");
+        assertThat(vo.getPrice()).isEqualTo("15000");
+
+    }
 }
