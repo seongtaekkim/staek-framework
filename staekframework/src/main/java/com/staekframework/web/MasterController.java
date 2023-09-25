@@ -3,6 +3,7 @@ package com.staekframework.web;
 
 import com.staekframework.business.User;
 import com.staekframework.business.UserDao;
+import com.staekframework.business.UserService;
 import com.staekframework.di.WireInject;
 
 import javax.servlet.RequestDispatcher;
@@ -28,11 +29,11 @@ public class MasterController extends HttpServlet {
         userDao = (UserDao) req.getServletContext().getAttribute("UserDao");
         userDao.createTable();
         userDao.deleteAll();
-        User user = new User("1","김성택","1111");
+        User user = new User("1","김성택","1111", "10000");
         userDao.insert(user);
-        user = new User("2","spring","2222");
+        user = new User("2","staek","2222", "15000");
         userDao.insert(user);
-        user = new User("3","spring","2222");
+        user = new User("3","seongtki","2222", "20000");
         userDao.insert(user);
         return userDao;
     }
@@ -47,7 +48,7 @@ public class MasterController extends HttpServlet {
             url = user.callList(req);
             List<User> users = getDataByUserDao(req).selectAll();
             req.setAttribute("users",users);
-            User user1 = new User("10", "a", "b");
+            User user1 = new User("10", "a", "b","100");
             req.setAttribute("data",user1);
             resp.setContentType("text/html; charset=UTF-8");
         }

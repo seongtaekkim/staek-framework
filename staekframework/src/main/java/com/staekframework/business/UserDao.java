@@ -23,7 +23,10 @@ public class UserDao {
     private static RowMapper<User> rowMapper = new RowMapper<>() {
         @Override
         public User row(ResultSet rs) throws SQLException {
-            return new User(rs.getString("id"), rs.getString("name"), rs.getString("password"));
+            return new User(rs.getString("id")
+                    , rs.getString("name")
+                    , rs.getString("password")
+                    , rs.getString("price"));
         }
     };
 
@@ -37,19 +40,20 @@ public class UserDao {
     }
 
     public void insert(User user) {
-        this.jdbccontext.updateSql("insert into users(id,name,password) values(?,?,?)", user.getId(), user.getName(), user.getPassword());
+        this.jdbccontext.updateSql("insert into users(id,name,password,price) values(?,?,?,?)"
+                , user.getId(), user.getName(), user.getPassword(), user.getPrice());
     }
 
     public List<User> selectAll() {
-        return this.jdbccontext.executeSql("select id, name, password from users", rowMapper);
+        return this.jdbccontext.executeSql("select id, name, password, price from users", rowMapper);
     }
 
     public User selectOne(Object... args) {
-        return this.jdbccontext.executeSql("select id, name, password from users where id = ? AND password = ?", rowMapper, args);
+        return this.jdbccontext.executeSql("select id, name, password, price from users where id = ? AND password = ?", rowMapper, args);
     }
 
     public List<User> selectList(Object... args) {
-        return this.jdbccontext.executeSql2("select id, name, password from users where name = ?", rowMapper, args);
+        return this.jdbccontext.executeSql2("select id, name, password, price from users where name = ?", rowMapper, args);
     }
 
     public int count() {
@@ -64,8 +68,7 @@ public class UserDao {
         String sql = "CREATE TABLE IF NOT EXISTS users (\n"
                 + "	id integer PRIMARY KEY,\n"
                 + "	name text NOT NULL,\n"
-                + " password text NOT NULL\n"
-                + ");";
+                + " password text NOT NULL, price integer NOT NULL DEFAULT 0 );";
 
         Statement stmt = null;
         try {
@@ -74,5 +77,10 @@ public class UserDao {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void update(User user) {
+        this.jdbccontext.updateSql("update users set price = ? where id = ?"
+                , user.getPrice(), user.getId());
     }
 }

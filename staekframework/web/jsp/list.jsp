@@ -6,7 +6,7 @@
 <h1>유저목록</h1>
 <p><a href='#'>유저목록</a></p>
 <c:forEach var="user" items="${users}">
-	<p>${user.id},${user.name},${user.password}</p>
+	<p>${user.id},${user.name},${user.password}, ${user.price}</p>
 </c:forEach>
 </body>
 </head>

@@ -1,4 +1,4 @@
-package com.staekframework.web;
+package com.staekframework.business;
 
 import javax.servlet.http.HttpServletRequest;
 
