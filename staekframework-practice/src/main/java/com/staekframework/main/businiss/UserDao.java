@@ -65,7 +65,6 @@ public class UserDao {
     }
 
     public void update(User user) {
-        System.out.println(user.getId() + " " + user.getPrice());
         this.jdbccontext.update("update users set price = ? where id = ?"
                 , user.getPrice(), user.getId());
     }
