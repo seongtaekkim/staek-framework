@@ -1,6 +1,14 @@
 package com.staekframework.business;
 
 import com.staekframework.di.WireInject;
+import com.staekframework.web.DataSourceTxManager;
+import com.staekframework.web.DefaultTxDefinition;
+import com.staekframework.web.TxManager;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionException;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -14,12 +22,21 @@ public class UserService {
     @WireInject
     private UserDao userDao;
 
-    private UserDao getUserDao(HttpServletRequest req) {
-        userDao = (UserDao) req.getServletContext().getAttribute("UserDao");
-        return userDao;
+    private TxManager transactionManager;
+
+    public void setTransactionManager(TxManager transactionManager) {
+        this.transactionManager = transactionManager;
     }
 
+
+    private UserDao getUserDao(HttpServletRequest req) {
+        userDao = (UserDao) req.getServletContext().getAttribute("UserDao");
+//        transactionManager = new DataSourceTransactionManager(userDa); // 임시
+        transactionManager = new DataSourceTxManager(userDao.datasource); // 임시
+        return userDao;
+    }
     private UserDao getDataByUserDao(HttpServletRequest req) {
+
         if (userDao == null) {
             userDao = (UserDao) req.getServletContext().getAttribute("UserDao");
             userDao.createTable();
@@ -62,7 +79,16 @@ public class UserService {
      * 만약, 중간에 로직이 실패했을 때 나머지 user가 적용되지 말아야 된다면 롤백이 필요할 것이다.
      *
      */
-    public String callwithdrawal(HttpServletRequest req) {
+    public String callwithdrawal(HttpServletRequest req) throws Exception {
+
+        TransactionStatus status = null;
+        try {
+            status = this.transactionManager
+                    .getTransaction(new DefaultTxDefinition());
+        } catch (TransactionException e) {
+            throw new RuntimeException(e);
+        }
+
         List<User> users = getDataByUserDao(req).selectAll();
         for (User user : users) {
             try {
@@ -73,7 +99,10 @@ public class UserService {
                 }
             } catch (Exception e) {
                 System.out.println(e.getMessage());
-//                throw e;
+                this.transactionManager.rollback(status);
+                throw e;
+            } finally {
+                this.transactionManager.commit(status);
             }
         }
 

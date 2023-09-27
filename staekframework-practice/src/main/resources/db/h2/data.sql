@@ -1,0 +1,9 @@
+-- noinspection SqlNoDataSourceInspectionForFile
+
+-- noinspection SqlDialectInspectionForFile
+
+INSERT INTO USERS (ID, NAME, PASSWORD, PRICE) VALUES (1, 'seongtki', '1111', 50000);
+INSERT INTO USERS (ID, NAME, PASSWORD, PRICE) VALUES (2, 'hannkim', '1111', 40000);
+INSERT INTO USERS (ID, NAME, PASSWORD, PRICE) VALUES (3, 'jseo', '1111', 30000);
+INSERT INTO USERS (ID, NAME, PASSWORD, PRICE) VALUES (4, 'san', '1111', 20000);
+INSERT INTO USERS (ID, NAME, PASSWORD, PRICE) VALUES (5, 'samin', '1111', 10000);
