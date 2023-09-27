@@ -42,16 +42,13 @@ public class UserService {
         }
     }
 
+    @Autowired
     PlatformTransactionManager transactionManager;
 
-    public void setTransactionManager(PlatformTransactionManager transactionManager) {
-        this.transactionManager = transactionManager;
-    }
-
     public void callwithdrawal_program() throws Exception {
+
         TransactionStatus status = this.transactionManager
                 .getTransaction(new DefaultTransactionDefinition());
-
 
         List<User> users = userDao.selectAll();
         for (User user : users) {
