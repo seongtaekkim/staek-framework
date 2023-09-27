@@ -6,7 +6,6 @@ import com.staekframework.main.businiss.UserService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -24,14 +23,14 @@ public class Application {
 
         UserService service = run.getBean(UserService.class);
         try {
-            service.callwithdrawal();
+            service.callwithdrawal_program();
+//            service.callwithdrawal_declare();
+//            service.callwithdrawal();
         } catch (Exception e) {
             System.out.println("fail");
         }
 
         list = dao.selectAll();
         list.stream().forEach(System.out::println);
-
-
     }
 }
