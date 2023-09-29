@@ -41,9 +41,27 @@ class UserDaoTest {
     @Test
     void add() {
         User user = new User("1", "kim", "1111", "10000");
-        userDao.insert(user);
+        UserService service = new UserService(userDao);
+        try {
+            service.createUser(user);
+        } catch (Exception e) {
+            System.out.println("fail");
+        }
         List<User> users = userDao.selectAll();
         assertThat(users).contains(user);
+    }
+
+    @Test
+    void 무결성검사_유저추가() {
+        User user = new User("1", "kim", "1111", "10");
+        UserService service = new UserService(userDao);
+        try {
+            service.createUser(user);
+        } catch (Exception e) {
+            System.out.println("fail");
+        }
+        List<User> users = userDao.selectAll();
+        assertThat(users.size()).isEqualTo(0);
     }
 
     @Test
@@ -54,8 +72,9 @@ class UserDaoTest {
         list.add(new User("3", "kim", "1111", "15000"));
         list.add(new User("4", "kim", "1111", "20000"));
         list.add(new User("5", "kim", "1111", "20000"));
+        UserService service = new UserService(userDao);
         for (User user : list) {
-            userDao.insert(user);
+            service.createUser(user);
         }
         assertThat(userDao.count()).isEqualTo(list.size());
     }
@@ -69,7 +88,8 @@ class UserDaoTest {
     @Test
     void update_price() {
         User user = new User("1", "kim", "1111", "10000");
-        userDao.insert(user);
+        UserService service = new UserService(userDao);
+        service.createUser(user);
         user = new User("1", "kim", "1111", "15000");
         userDao.update(user);
         User vo = userDao.selectOne("1", "1111");
