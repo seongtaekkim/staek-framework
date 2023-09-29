@@ -30,11 +30,6 @@ public class JDBCContext {
             throw new RuntimeException(e);
         } finally {
             try {
-                conn.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            try {
                 if (ps != null) ps.close();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -60,11 +55,6 @@ public class JDBCContext {
             throw new RuntimeException(e);
         } finally {
             try {
-                conn.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            try {
                 ps.close();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -87,11 +77,6 @@ public class JDBCContext {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
             try {
                 ps.close();
             } catch (SQLException e) {
@@ -116,11 +101,6 @@ public class JDBCContext {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
             try {
                 ps.close();
             } catch (SQLException e) {
@@ -147,11 +127,6 @@ public class JDBCContext {
             throw new RuntimeException(e);
         } finally {
             try {
-                conn.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            try {
                 ps.close();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -171,11 +146,6 @@ public class JDBCContext {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
             try {
                 ps.close();
             } catch (SQLException e) {
