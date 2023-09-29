@@ -12,10 +12,13 @@ public class JDBCConnection implements Datasource {
 	private static final String USERNAME = InitYaml.get().getJDBC("USERNAME");
 	private static final String PASSWORD = InitYaml.get().getJDBC("PASSWORD");
 
+	private static Connection conn = null;
+
 	@Override
 	public Connection newConnection() {
 
-		Connection conn = null;
+		if (conn != null)
+			return conn;
 		try {
 			conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
 		} catch (SQLException e) {
@@ -23,6 +26,15 @@ public class JDBCConnection implements Datasource {
 		}
 		return conn;
 
+	}
+
+	/**
+	 * @deprecated 테스트 위해서 임시
+	 * @return
+	 */
+	@Override
+	public Connection getConnection() {
+		return this.conn;
 	}
 
 }
