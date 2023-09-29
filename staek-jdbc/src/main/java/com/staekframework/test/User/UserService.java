@@ -1,6 +1,8 @@
 package com.staekframework.test.User;
 
-import java.sql.SQLException;
+import com.staekframework.tx.DefaultTxManager;
+import com.staekframework.tx.TxManager;
+
 import java.util.List;
 
 public class UserService {
@@ -25,11 +27,9 @@ public class UserService {
      */
     public void callwithdrawal_program() throws Exception {
         List<User> users = userDao.selectAll();
-        try {
-            userDao.datasource.getConnection().setAutoCommit(false);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+
+        TxManager tx = new DefaultTxManager(userDao.datasource.getConnection());
+        tx.startTx();
         for (User user : users) {
             try {
                 if (checkPrice(user)) {
@@ -39,13 +39,11 @@ public class UserService {
                 userDao.update(uptVo);
                 }
             } catch (Exception e) {
-                userDao.datasource.getConnection().rollback();
-                userDao.datasource.getConnection().setAutoCommit(true);
+                tx.rollback();
                 throw e;
             }
         }
-        userDao.datasource.getConnection().commit();
-        userDao.datasource.getConnection().setAutoCommit(true);
+        tx.commit();
     }
 
     public void callwithdrawal() throws Exception {
