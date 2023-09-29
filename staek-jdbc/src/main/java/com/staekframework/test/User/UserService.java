@@ -1,6 +1,8 @@
 package com.staekframework.test.User;
 
-import java.sql.SQLException;
+import com.staekframework.tx.DefaultTxManager;
+import com.staekframework.tx.TxManager;
+
 import java.util.List;
 
 public class UserService {
@@ -12,12 +14,31 @@ public class UserService {
         this.userDao = userDao;
     }
 
-    private boolean checkPrice(User user) {
+    private boolean checkPrice(User user, int checkPrice) {
         int price = Integer.parseInt(user.getPrice());
-        if (price > 10000) {
+        if (price > checkPrice) {
             return true;
         } else
             throw new IllegalArgumentException("Insufficient balance: " + price);
+    }
+
+
+    /**
+     * 프로그래밍적 트랜젝션 적용
+     */
+    public void createUser(User user) {
+
+        TxManager tx = new DefaultTxManager(userDao.datasource.getConnection());
+        try {
+            tx.startTx();
+            if (checkPrice(user, 1000)) {
+                userDao.insert(user);
+            }
+        } catch (IllegalArgumentException e) {
+            tx.rollback();
+            throw e;
+        }
+        tx.commit();
     }
 
     /**
@@ -25,27 +46,23 @@ public class UserService {
      */
     public void callwithdrawal_program() throws Exception {
         List<User> users = userDao.selectAll();
-        try {
-            userDao.datasource.getConnection().setAutoCommit(false);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+
+        TxManager tx = new DefaultTxManager(userDao.datasource.getConnection());
+        tx.startTx();
         for (User user : users) {
             try {
-                if (checkPrice(user)) {
+                if (checkPrice(user, 10000)) {
                 User uptVo = new User(user.getId(), user.getName(), user.getPassword()
                         , Integer.toString(Integer.parseInt(user.getPrice()) - 10000));
 
                 userDao.update(uptVo);
                 }
             } catch (Exception e) {
-                userDao.datasource.getConnection().rollback();
-                userDao.datasource.getConnection().setAutoCommit(true);
+                tx.rollback();
                 throw e;
             }
         }
-        userDao.datasource.getConnection().commit();
-        userDao.datasource.getConnection().setAutoCommit(true);
+        tx.commit();
     }
 
     public void callwithdrawal() throws Exception {
@@ -53,7 +70,7 @@ public class UserService {
         List<User> users = userDao.selectAll();
         for (User user : users) {
             try {
-                if (checkPrice(user)) {
+                if (checkPrice(user, 100000)) {
                     User uptVo = new User(user.getId(), user.getName(), user.getPassword()
                             , Integer.toString(Integer.parseInt(user.getPrice()) - 10000));
                     userDao.update(uptVo);
