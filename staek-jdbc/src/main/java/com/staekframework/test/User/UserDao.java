@@ -16,8 +16,10 @@ import java.util.List;
 public class UserDao {
 
     private final JDBCContext jdbccontext;
+    public final Datasource datasource;
 
     public UserDao(Datasource datasource) {
+        this.datasource = datasource;
         this.jdbccontext = new JDBCContext(datasource);
     }
 
