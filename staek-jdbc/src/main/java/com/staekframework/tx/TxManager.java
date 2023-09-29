@@ -12,15 +12,15 @@ public interface TxManager {
      * 트랜잭션 시작 함수
      *
      */
-    void startTx() throws SQLException;
+    void startTx();
 
     /**
      * commit
      */
-    void commit() throws SQLException;
+    void commit();
 
     /**
      * rollback
      */
-    void rollback() throws SQLException;
+    void rollback();
 }

@@ -21,20 +21,32 @@ public class DefaultTxManager implements TxManager {
     }
 
     @Override
-    public void startTx() throws SQLException {
-        this.connection.setAutoCommit(false);
+    public void startTx() {
+        try {
+            this.connection.setAutoCommit(false);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public void commit() throws SQLException {
-        this.connection.commit();
-        this.connection.setAutoCommit(true);
+    public void commit()  {
+        try {
+            this.connection.commit();
+            this.connection.setAutoCommit(true);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public void rollback() throws SQLException {
-        this.connection.rollback();
-        this.connection.setAutoCommit(true);
+    public void rollback() {
+        try {
+            this.connection.rollback();
+            this.connection.setAutoCommit(true);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
