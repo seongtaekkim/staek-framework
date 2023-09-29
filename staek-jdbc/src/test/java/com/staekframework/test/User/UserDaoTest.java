@@ -6,6 +6,7 @@ import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.*;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,5 +75,32 @@ class UserDaoTest {
         User vo = userDao.selectOne("1", "1111");
         assertThat(vo.getPrice()).isEqualTo("15000");
 
+    }
+
+    @Test
+    void 무결성오류_검사() throws SQLException {
+        List<User> list = new ArrayList<>();
+        list.add(new User("1", "kim", "1111", "50000"));
+        list.add(new User("2", "kim2", "1111", "45000"));
+        list.add(new User("3", "kim3", "1111", "35000"));
+        list.add(new User("4", "kim4", "1111", "20000"));
+        list.add(new User("5", "kim5", "1111", "10000"));
+        for (User user : list) {
+            userDao.insert(user);
+//            userDao.datasource.getConnection().commit();
+        }
+        List<User> users = userDao.selectAll();
+        users.stream().forEach(System.out::println);
+
+        UserService service = new UserService(userDao);
+        try {
+            service.callwithdrawal_program();
+        } catch (Exception e) {
+            System.out.println("fail");
+        }
+
+        List<User> users2 = userDao.selectAll();
+        users2.stream().forEach(System.out::println);
+        assertThat(users).isEqualTo(users2);
     }
 }
