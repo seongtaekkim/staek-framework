@@ -15,9 +15,9 @@ import java.lang.reflect.Method;
  */
 public class TxHandler implements InvocationHandler {
 
-    UserService target;
+    Object target;
 
-    public TxHandler(UserService target) {
+    public TxHandler(Object target) {
         this.target = target;
     }
 
@@ -25,11 +25,11 @@ public class TxHandler implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
-        UserServiceImpl invoke = null;
+        Object invoke = null;
         TxManager tx = new DefaultTxManager(JDBCConnection.conn);
         tx.startTx();
         try {
-            invoke = (UserServiceImpl) method.invoke(target, args);
+            invoke = method.invoke(target, args);
         } catch (Exception e) {
             tx.rollback();
             throw e;
