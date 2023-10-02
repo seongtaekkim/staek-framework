@@ -57,10 +57,11 @@ class UserDaoTest {
     void 무결성검사_유저추가() {
         User user = new User("1", "kim", "1111", "10");
         UserService service = new UserServiceImpl(userDao);
-        UserServiceTx userServiceTx = new UserServiceTx();
-        userServiceTx.setUserService(service);
+        UserService o = (UserService) Proxy.newProxyInstance(getClass().getClassLoader()
+                , new Class[]{UserService.class}
+                , new TxHandler(service));
         try {
-            userServiceTx.createUser(user);
+            o.createUser(user);
         } catch (Exception e) {
             System.out.println("fail");
         }
@@ -127,10 +128,11 @@ class UserDaoTest {
         /**
          * 동적으로 생성되는 다이내믹 프록시 클래스의 로딩에 사용할 클래스 로더, 구현할 인터페이스, 타겟 클래스를 담은 InvocationHandler 구현체
          */
-        UserServiceTx tx = new UserServiceTx();
-        tx.setUserService(service);
+        UserService o = (UserService) Proxy.newProxyInstance(getClass().getClassLoader()
+                , new Class[]{UserService.class}
+                , new TxHandler(service));
         try {
-            tx.callwithdrawal_program();
+            o.callwithdrawal_program();
         } catch (Exception e) {
             System.out.println("fail");
         }

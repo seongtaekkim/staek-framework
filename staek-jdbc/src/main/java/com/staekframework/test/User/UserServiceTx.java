@@ -6,6 +6,7 @@ import com.staekframework.tx.TxManager;
 
 
 /**
+ * @deprecated InvocationHandler & Proxy 기능생성으로 필요없어짐.
  * UserService 의 트랜잭션기능을 갖고있는 프록시객체.
  * target: UserService
  * 부가기능: transaction 경계설정
