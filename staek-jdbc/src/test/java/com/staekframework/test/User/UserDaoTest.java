@@ -107,14 +107,15 @@ class UserDaoTest {
         list.add(new User("5", "kim5", "1111", "10000"));
         for (User user : list) {
             userDao.insert(user);
-//            userDao.datasource.getConnection().commit();
         }
         List<User> users = userDao.selectAll();
         users.stream().forEach(System.out::println);
 
         UserService service = new UserServiceImpl(userDao);
+        UserServiceTx serviceTx = new UserServiceTx();
+        serviceTx.setUserService(service);
         try {
-            service.callwithdrawal_program();
+            serviceTx.callwithdrawal_program();
         } catch (Exception e) {
             System.out.println("fail");
         }
