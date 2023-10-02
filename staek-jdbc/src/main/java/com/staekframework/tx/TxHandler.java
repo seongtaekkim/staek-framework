@@ -16,9 +16,14 @@ import java.lang.reflect.Method;
 public class TxHandler implements InvocationHandler {
 
     Object target;
+    TxManager tx;
 
     public TxHandler(Object target) {
         this.target = target;
+    }
+
+    public void setTxManager(TxManager tx) {
+        this.tx = tx;
     }
 
 
@@ -26,7 +31,6 @@ public class TxHandler implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
         Object invoke = null;
-        TxManager tx = new DefaultTxManager(JDBCConnection.conn);
         tx.startTx();
         try {
             invoke = method.invoke(target, args);

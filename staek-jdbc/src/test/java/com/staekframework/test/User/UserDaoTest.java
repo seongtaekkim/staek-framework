@@ -2,6 +2,8 @@ package com.staekframework.test.User;
 
 import com.staekframework.jdbc.Datasource;
 
+import com.staekframework.jdbc.JDBCConnection;
+import com.staekframework.tx.DefaultTxManager;
 import com.staekframework.tx.TxHandler;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.*;
@@ -57,9 +59,12 @@ class UserDaoTest {
     void 무결성검사_유저추가() {
         User user = new User("1", "kim", "1111", "10");
         UserService service = new UserServiceImpl(userDao);
+        TxHandler txHandler = new TxHandler(service);
+        txHandler.setTxManager(new DefaultTxManager(JDBCConnection.conn));
+
         UserService o = (UserService) Proxy.newProxyInstance(getClass().getClassLoader()
                 , new Class[]{UserService.class}
-                , new TxHandler(service));
+                , txHandler);
         try {
             o.createUser(user);
         } catch (Exception e) {
@@ -125,13 +130,15 @@ class UserDaoTest {
         users.stream().forEach(System.out::println);
 
         UserService service = new UserServiceImpl(userDao);
+        TxHandler txHandler = new TxHandler(service);
+        txHandler.setTxManager(new DefaultTxManager(JDBCConnection.conn));
         /**
          * 다이나믹 프록시 생성 코드
          * 동적으로 생성되는 다이내믹 프록시 클래스의 로딩에 사용할 클래스 로더, 구현할 인터페이스, 타겟 클래스를 담은 InvocationHandler 구현체
          */
         UserService o = (UserService) Proxy.newProxyInstance(getClass().getClassLoader()
                 , new Class[]{UserService.class}
-                , new TxHandler(service));
+                , txHandler);
         try {
             o.callwithdrawal_program();
         } catch (Exception e) {
