@@ -2,9 +2,13 @@ package com.staekframework.test.User;
 
 import com.staekframework.jdbc.Datasource;
 
+import com.staekframework.jdbc.JDBCConnection;
+import com.staekframework.tx.DefaultTxManager;
+import com.staekframework.tx.TxHandler;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.*;
 
+import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -41,7 +45,7 @@ class UserDaoTest {
     @Test
     void add() {
         User user = new User("1", "kim", "1111", "10000");
-        UserService service = new UserService(userDao);
+        UserService service = new UserServiceImpl(userDao);
         try {
             service.createUser(user);
         } catch (Exception e) {
@@ -54,9 +58,15 @@ class UserDaoTest {
     @Test
     void 무결성검사_유저추가() {
         User user = new User("1", "kim", "1111", "10");
-        UserService service = new UserService(userDao);
+        UserService service = new UserServiceImpl(userDao);
+        TxHandler txHandler = new TxHandler(service);
+        txHandler.setTxManager(new DefaultTxManager(JDBCConnection.conn));
+
+        UserService o = (UserService) Proxy.newProxyInstance(getClass().getClassLoader()
+                , new Class[]{UserService.class}
+                , txHandler);
         try {
-            service.createUser(user);
+            o.createUser(user);
         } catch (Exception e) {
             System.out.println("fail");
         }
@@ -72,9 +82,13 @@ class UserDaoTest {
         list.add(new User("3", "kim", "1111", "15000"));
         list.add(new User("4", "kim", "1111", "20000"));
         list.add(new User("5", "kim", "1111", "20000"));
-        UserService service = new UserService(userDao);
+        UserService service = new UserServiceImpl(userDao);
         for (User user : list) {
-            service.createUser(user);
+            try {
+                service.createUser(user);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
         assertThat(userDao.count()).isEqualTo(list.size());
     }
@@ -88,8 +102,12 @@ class UserDaoTest {
     @Test
     void update_price() {
         User user = new User("1", "kim", "1111", "10000");
-        UserService service = new UserService(userDao);
-        service.createUser(user);
+        UserService service = new UserServiceImpl(userDao);
+        try {
+            service.createUser(user);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         user = new User("1", "kim", "1111", "15000");
         userDao.update(user);
         User vo = userDao.selectOne("1", "1111");
@@ -107,14 +125,22 @@ class UserDaoTest {
         list.add(new User("5", "kim5", "1111", "10000"));
         for (User user : list) {
             userDao.insert(user);
-//            userDao.datasource.getConnection().commit();
         }
         List<User> users = userDao.selectAll();
         users.stream().forEach(System.out::println);
 
-        UserService service = new UserService(userDao);
+        UserService service = new UserServiceImpl(userDao);
+        TxHandler txHandler = new TxHandler(service);
+        txHandler.setTxManager(new DefaultTxManager(JDBCConnection.conn));
+        /**
+         * 다이나믹 프록시 생성 코드
+         * 동적으로 생성되는 다이내믹 프록시 클래스의 로딩에 사용할 클래스 로더, 구현할 인터페이스, 타겟 클래스를 담은 InvocationHandler 구현체
+         */
+        UserService o = (UserService) Proxy.newProxyInstance(getClass().getClassLoader()
+                , new Class[]{UserService.class}
+                , txHandler);
         try {
-            service.callwithdrawal_program();
+            o.callwithdrawal_program();
         } catch (Exception e) {
             System.out.println("fail");
         }

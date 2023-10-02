@@ -12,7 +12,10 @@ public class JDBCConnection implements Datasource {
 	private static final String USERNAME = InitYaml.get().getJDBC("USERNAME");
 	private static final String PASSWORD = InitYaml.get().getJDBC("PASSWORD");
 
-	private static Connection conn = null;
+	/**
+	 * DI 완성할 때까지 임시로 public
+	 */
+	public static Connection conn = null;
 
 	@Override
 	public Connection newConnection() {

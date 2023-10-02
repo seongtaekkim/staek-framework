@@ -14,12 +14,9 @@ import java.util.List;
  *      rowmapper 작성, query string 작성
  */
 public class UserDao {
-
     private final JDBCContext jdbccontext;
-    public final Datasource datasource;
 
     public UserDao(Datasource datasource) {
-        this.datasource = datasource;
         this.jdbccontext = new JDBCContext(datasource);
     }
 
