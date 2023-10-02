@@ -29,18 +29,9 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void createUser(User user) {
-
-        TxManager tx = new DefaultTxManager(JDBCConnection.conn);
-        try {
-            tx.startTx();
-            if (checkPrice(user, 1000)) {
-                userDao.insert(user);
-            }
-        } catch (IllegalArgumentException e) {
-            tx.rollback();
-            throw e;
+        if (checkPrice(user, 1000)) {
+            userDao.insert(user);
         }
-        tx.commit();
     }
 
     /**

@@ -20,7 +20,15 @@ public class UserServiceTx implements UserService {
 
     @Override
     public void createUser(User user) {
-        this.userService.createUser(user);
+        TxManager tx = new DefaultTxManager(JDBCConnection.conn);
+        try {
+            tx.startTx();
+            this.userService.createUser(user);
+        } catch (IllegalArgumentException e) {
+            tx.rollback();
+            throw e;
+        }
+        tx.commit();
     }
 
     @Override
