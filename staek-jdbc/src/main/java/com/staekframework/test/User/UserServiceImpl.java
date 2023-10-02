@@ -29,8 +29,8 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void createUser(User user) {
+        userDao.insert(user);
         if (checkPrice(user, 1000)) {
-            userDao.insert(user);
         }
     }
 
@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
      * 프로그래밍적 트랜젝션 적용
      */
     @Override
-    public void callwithdrawal_program() throws Exception {
+    public void callwithdrawal_program() {
 
         List<User> users = userDao.selectAll();
         for (User user : users) {

@@ -2,9 +2,11 @@ package com.staekframework.test.User;
 
 import com.staekframework.jdbc.Datasource;
 
+import com.staekframework.tx.TxHandler;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.*;
 
+import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -55,8 +57,10 @@ class UserDaoTest {
     void 무결성검사_유저추가() {
         User user = new User("1", "kim", "1111", "10");
         UserService service = new UserServiceImpl(userDao);
+        UserServiceTx userServiceTx = new UserServiceTx();
+        userServiceTx.setUserService(service);
         try {
-            service.createUser(user);
+            userServiceTx.createUser(user);
         } catch (Exception e) {
             System.out.println("fail");
         }
@@ -74,7 +78,11 @@ class UserDaoTest {
         list.add(new User("5", "kim", "1111", "20000"));
         UserService service = new UserServiceImpl(userDao);
         for (User user : list) {
-            service.createUser(user);
+            try {
+                service.createUser(user);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
         assertThat(userDao.count()).isEqualTo(list.size());
     }
@@ -89,7 +97,11 @@ class UserDaoTest {
     void update_price() {
         User user = new User("1", "kim", "1111", "10000");
         UserService service = new UserServiceImpl(userDao);
-        service.createUser(user);
+        try {
+            service.createUser(user);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         user = new User("1", "kim", "1111", "15000");
         userDao.update(user);
         User vo = userDao.selectOne("1", "1111");
@@ -112,10 +124,13 @@ class UserDaoTest {
         users.stream().forEach(System.out::println);
 
         UserService service = new UserServiceImpl(userDao);
-        UserServiceTx serviceTx = new UserServiceTx();
-        serviceTx.setUserService(service);
+        /**
+         * 동적으로 생성되는 다이내믹 프록시 클래스의 로딩에 사용할 클래스 로더, 구현할 인터페이스, 타겟 클래스를 담은 InvocationHandler 구현체
+         */
+        UserServiceTx tx = new UserServiceTx();
+        tx.setUserService(service);
         try {
-            serviceTx.callwithdrawal_program();
+            tx.callwithdrawal_program();
         } catch (Exception e) {
             System.out.println("fail");
         }

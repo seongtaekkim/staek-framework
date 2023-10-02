@@ -10,6 +10,6 @@ public interface UserService {
 
     void createUser(User user);
 
-    void callwithdrawal_program() throws Exception;
+    void callwithdrawal_program();
 
 }

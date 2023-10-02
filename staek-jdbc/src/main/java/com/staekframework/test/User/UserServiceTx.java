@@ -24,7 +24,7 @@ public class UserServiceTx implements UserService {
         try {
             tx.startTx();
             this.userService.createUser(user);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             tx.rollback();
             throw e;
         }
@@ -32,12 +32,12 @@ public class UserServiceTx implements UserService {
     }
 
     @Override
-    public void callwithdrawal_program() throws Exception {
+    public void callwithdrawal_program() {
         TxManager tx = new DefaultTxManager(JDBCConnection.conn);
         tx.startTx();
         try {
             this.userService.callwithdrawal_program();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             tx.rollback();
             throw e;
         }
