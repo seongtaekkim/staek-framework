@@ -8,4 +8,5 @@ public interface UserService {
 
     public void callwithdrawal_program() throws Exception;
 
+    public void callwithdrawal() throws Exception;
 }
