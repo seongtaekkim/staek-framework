@@ -41,7 +41,7 @@ class UserDaoTest {
     @Test
     void add() {
         User user = new User("1", "kim", "1111", "10000");
-        UserService service = new UserService(userDao);
+        UserService service = new UserServiceImpl(userDao);
         try {
             service.createUser(user);
         } catch (Exception e) {
@@ -54,7 +54,7 @@ class UserDaoTest {
     @Test
     void 무결성검사_유저추가() {
         User user = new User("1", "kim", "1111", "10");
-        UserService service = new UserService(userDao);
+        UserService service = new UserServiceImpl(userDao);
         try {
             service.createUser(user);
         } catch (Exception e) {
@@ -72,7 +72,7 @@ class UserDaoTest {
         list.add(new User("3", "kim", "1111", "15000"));
         list.add(new User("4", "kim", "1111", "20000"));
         list.add(new User("5", "kim", "1111", "20000"));
-        UserService service = new UserService(userDao);
+        UserService service = new UserServiceImpl(userDao);
         for (User user : list) {
             service.createUser(user);
         }
@@ -88,7 +88,7 @@ class UserDaoTest {
     @Test
     void update_price() {
         User user = new User("1", "kim", "1111", "10000");
-        UserService service = new UserService(userDao);
+        UserService service = new UserServiceImpl(userDao);
         service.createUser(user);
         user = new User("1", "kim", "1111", "15000");
         userDao.update(user);
@@ -112,7 +112,7 @@ class UserDaoTest {
         List<User> users = userDao.selectAll();
         users.stream().forEach(System.out::println);
 
-        UserService service = new UserService(userDao);
+        UserService service = new UserServiceImpl(userDao);
         try {
             service.callwithdrawal_program();
         } catch (Exception e) {
