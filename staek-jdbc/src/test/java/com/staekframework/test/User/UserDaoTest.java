@@ -126,6 +126,7 @@ class UserDaoTest {
 
         UserService service = new UserServiceImpl(userDao);
         /**
+         * 다이나믹 프록시 생성 코드
          * 동적으로 생성되는 다이내믹 프록시 클래스의 로딩에 사용할 클래스 로더, 구현할 인터페이스, 타겟 클래스를 담은 InvocationHandler 구현체
          */
         UserService o = (UserService) Proxy.newProxyInstance(getClass().getClassLoader()
