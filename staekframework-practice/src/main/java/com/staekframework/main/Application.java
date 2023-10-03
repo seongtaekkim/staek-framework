@@ -25,33 +25,5 @@ public class Application {
         List<User> list = dao.selectAll();
         list.stream().forEach(System.out::println);
 
-        UserService service = run.getBean(UserServiceImpl.class);
-        try {
-            service.callwithdrawal_program();
-//            service.callwithdrawal_declare();
-//            service.callwithdrawal();
-        } catch (Exception e) {
-            System.out.println("fail");
-        }
-
-        list = dao.selectAll();
-        list.stream().forEach(System.out::println);
-
-
-        /**
-         * FactoryBean 을 이용한 트랜잭션 테스트
-         */
-        AnnotationConfigApplicationContext context =
-                new AnnotationConfigApplicationContext(TxFactoryConfig.class);
-        TxFactoryBean bean = context.getBean(TxFactoryBean.class);
-        bean.setTransactionManager(run.getBean(PlatformTransactionManager.class));
-        bean.setTarget(service);
-        try {
-            ((UserService) bean.getObject()).callwithdrawal();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        list = dao.selectAll();
-        list.stream().forEach(System.out::println);
     }
 }
