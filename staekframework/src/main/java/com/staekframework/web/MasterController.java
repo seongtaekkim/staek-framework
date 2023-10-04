@@ -6,6 +6,10 @@ import com.staekframework.business.UserDao;
 import com.staekframework.business.UserService;
 import com.staekframework.business.UserServiceImpl;
 import com.staekframework.di.WireInject;
+import com.staekframework.jdbc.JDBCConnection;
+import com.staekframework.tx.DefaultTxManager;
+import com.staekframework.tx.TxFactoryProxy;
+import com.staekframework.tx.TxManager;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -30,17 +34,26 @@ public class MasterController extends HttpServlet {
         userDao.createTable();
         if ("/user".equals(pathInfo)) {
             UserService user = new UserServiceImpl(userDao);
-            user.createUser(new User("1", "김성택", "1111", "10000"));
-            user.createUser(new User("2", "staek", "2222", "15000"));
-            user.createUser(new User("3", "seongtki", "2222", "20000"));
+            user.createUser(new User("1", "kim", "1111", "50000"));
+            user.createUser(new User("2", "kim2", "1111", "45000"));
+            user.createUser(new User("3", "kim3", "1111", "35000"));
+            user.createUser(new User("4", "kim4", "1111", "20000"));
+            user.createUser(new User("5", "kim5", "1111", "10000"));
             req.setAttribute("users", user.users());
             url = UserService.url;
             resp.setContentType("text/html; charset=UTF-8");
         }
         if ("/withdrawal".equals(pathInfo)) {
             UserService user = new UserServiceImpl(userDao);
+            DefaultTxManager txManager = (DefaultTxManager) req.getServletContext().getAttribute("defaultTxManager");
+            txManager.setConnection(JDBCConnection.conn);
+            TxFactoryProxy txFactoryProxy = (TxFactoryProxy) req.getServletContext().getAttribute("txFactoryProxy");
+            txFactoryProxy.setTarget(user);
+            txFactoryProxy.setServiceInterface(UserService.class);
+            txFactoryProxy.setTxManager(txManager);
+
             try {
-                user.callwithdrawal_program();
+                ((UserService)txFactoryProxy.getObject()).callwithdrawal_program();
             } catch (Exception e) {
 
             }

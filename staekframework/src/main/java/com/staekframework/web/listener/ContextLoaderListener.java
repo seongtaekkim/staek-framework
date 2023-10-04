@@ -27,6 +27,9 @@ public class ContextLoaderListener implements ServletContextListener {
         scan.scanAndCreateInstance();
         Object instance = scan.getInstance("com.staekframework.business.UserDao");
         context.setAttribute("UserDao", instance);
+        context.setAttribute("defaultTxManager", scan.getInstance("com.staekframework.tx.DefaultTxManager"));
+        context.setAttribute("txFactoryProxy", scan.getInstance("com.staekframework.tx.TxFactoryProxy"));
+
     }
 
     @Override
