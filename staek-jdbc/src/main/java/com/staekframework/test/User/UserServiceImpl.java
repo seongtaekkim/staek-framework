@@ -1,8 +1,6 @@
 package com.staekframework.test.User;
 
 import com.staekframework.jdbc.JDBCConnection;
-import com.staekframework.tx.DefaultTxManager;
-import com.staekframework.tx.TxManager;
 
 import java.util.List;
 
@@ -23,30 +21,10 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Insufficient balance: " + price);
     }
 
-
-    /**
-     * 프로그래밍적 트랜젝션 적용
-     */
     @Override
     public void createUser(User user) {
         userDao.insert(user);
         if (checkPrice(user, 1000)) {
-        }
-    }
-
-    /**
-     * 프로그래밍적 트랜젝션 적용
-     */
-    @Override
-    public void callwithdrawal_program() {
-
-        List<User> users = userDao.selectAll();
-        for (User user : users) {
-            if (checkPrice(user, 10000)) {
-            User uptVo = new User(user.getId(), user.getName(), user.getPassword()
-                    , Integer.toString(Integer.parseInt(user.getPrice()) - 10000));
-            userDao.update(uptVo);
-            }
         }
     }
 
