@@ -1,5 +1,7 @@
 package com.staekframework.tx;
 
+import com.staekframework.di.Inject;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -8,9 +10,13 @@ import java.sql.SQLException;
  * @author staek
  * 스레드가 1개라고 가정하고 같은 connection을 반복해서 사용
  */
+@Inject
 public class DefaultTxManager implements TxManager {
 
     private Connection connection;
+
+    public DefaultTxManager() {
+    }
 
     public DefaultTxManager(Connection connection) {
         setConnection(connection);
