@@ -14,7 +14,7 @@ public class TxHandler implements InvocationHandler {
     Object target;
     TxManager tx;
 
-    public TxHandler(Object target) {
+    public void setTarget(Object target) {
         this.target = target;
     }
 
