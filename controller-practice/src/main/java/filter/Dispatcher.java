@@ -6,11 +6,13 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class Dispatcher implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        System.out.println("init d성ispatcher");
+        System.out.println("init dispatcher");
     }
 
     @Override
@@ -26,10 +28,15 @@ public class Dispatcher implements Filter {
         System.out.println("앤드포잍느 : " + endPoint);
 
         UserController userController = new UserController();
-        if ("/resister".equals(endPoint)) {
-            userController.register();
-        } else if ("/login".equals(endPoint)) {
-            userController.login();
+        Method[] method = userController.getClass().getDeclaredMethods();
+        for (Method m : method) {
+            if (m.getName().equals("/" + endPoint)) {
+                try {
+                    m.invoke(userController);
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
     }
 
