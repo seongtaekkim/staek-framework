@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.annotation.Target;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -79,9 +80,6 @@ public class Dispatcher implements Filter {
             Method[] methods = dto.getClass().getDeclaredMethods();
             for (Method m : methods) {
                 if (m.getName().equals(methodName)) {
-                    /**
-                     * 타입 체크 로직 필요함
-                     */
                     m.invoke(dto, request.getParameter(param));
                 }
             }
