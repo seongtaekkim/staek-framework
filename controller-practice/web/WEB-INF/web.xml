@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app>
+
+	<filter>
+		<filter-name>dispatcher</filter-name>
+		<filter-class>filter.Dispatcher</filter-class>
+	</filter>
+
+	<!-- 모든 필터중 가장 마지막에 실행되어야 하는 필터-->
+	<!-- 필터 순서는 filter-mapping 여러개 있을 때 위에서부터 순차적으로 실행됨 -->
+	<filter-mapping>
+		<filter-name>dispatcher</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+</web-app>
