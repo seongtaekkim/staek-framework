@@ -1,5 +1,6 @@
 package filter;
 
+import annotation.RequestMapping;
 import controller.UserController;
 
 import javax.servlet.*;
@@ -29,13 +30,18 @@ public class Dispatcher implements Filter {
 
         UserController userController = new UserController();
         Method[] method = userController.getClass().getDeclaredMethods();
+
         for (Method m : method) {
-            if (m.getName().equals("/" + endPoint)) {
+            RequestMapping annotation = m.getDeclaredAnnotation(RequestMapping.class);
+            if (annotation.value().equals(endPoint)) {
                 try {
-                    m.invoke(userController);
+                    String path = (String) m.invoke(userController);
+                    RequestDispatcher rd = request.getRequestDispatcher(path);
+                    rd.forward(request, response);
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     throw new RuntimeException(e);
                 }
+                break ;
             }
         }
     }
