@@ -1,9 +1,10 @@
 package me.staek.aoppractice.web;
 
 
+import jakarta.validation.Valid;
 import me.staek.aoppractice.domain.*;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,8 +48,9 @@ public class UserController {
 //    public void save(String username, String password, String email) {
 //    public void save(@RequestBody String body) {
 //    public ResponseEntity<String> save(@RequestBody User user) {
-    public CommonDto<String> save(@RequestBody JoinReqDto user) {
+    public CommonDto<?> save(@Valid @RequestBody JoinReqDto user, BindingResult bindingResult) {
         System.out.println("save" + user);
+
         userRepository.save(user);
 
 
@@ -64,11 +66,12 @@ public class UserController {
     }
 
     @PutMapping("/user/{id}")
-    public CommonDto<String> update(@PathVariable int id, @RequestBody UptateReqDto dto) {
+    public CommonDto<?> update(@PathVariable int id, @Valid @RequestBody UptateReqDto dto, BindingResult bindingResult) {
         System.out.println("update");
-        throw new IllegalArgumentException("bad argument");
-//        userRepository.update(dto);
-//        return new CommonDto<>(HttpStatus.OK.value());
+
+//        throw new IllegalArgumentException("bad argument");
+        userRepository.update(dto);
+        return new CommonDto<>(HttpStatus.OK.value());
     }
 
 }
