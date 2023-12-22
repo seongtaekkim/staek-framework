@@ -27,7 +27,6 @@ public class ApiServerTest extends HttpServlet {
 
         System.out.println(req.getContentType());
 
-        req.setCharacterEncoding("UTF-8");
         if ("application/json".equals(req.getContentType())) {
             BufferedReader br = req.getReader();
             String read;
@@ -44,8 +43,8 @@ public class ApiServerTest extends HttpServlet {
         }
 
 //        resp.setContentType("text/plain; charset=utf-8");
-//        resp.setContentType("text/html; charset=utf-8");
-        resp.setContentType("application/json; charset=utf-8");
+        resp.setContentType("text/html; charset=utf-8");
+//        resp.setContentType("application/json; charset=utf-8");
 //        resp.sendRedirect("index.jsp");
         PrintWriter out = resp.getWriter();
         out.println("<html>");
